@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura RNG - Crafting, Potions & Cosmic Stars</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Cinzel:wght@700;900&family=Courier+Prime:wght@700&family=Orbitron:wght@800;900&family=Creepster&family=Rubik+Glitch&family=Nosifer&family=Press+Start+2P&family=Wallpoet&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #030307;
+            color: #f3f4f6;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 18, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-panel-heavy {
+            background: rgba(6, 6, 11, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        /* --- UNIQUE AURA FONTS --- */
+        .font-common { font-family: 'Poppins', sans-serif; }
+        .font-uncommon { font-family: 'Poppins', sans-serif; font-weight: 600; }
+        .font-rare { font-family: 'Poppins', sans-serif; font-weight: 700; }
+        .font-epic { font-family: 'Poppins', sans-serif; font-weight: 900; }
+        .font-crystal { font-family: 'Orbitron', sans-serif; }
+        .font-blossom { font-family: 'Cinzel', serif; }
+        .font-glacier { font-family: 'Orbitron', sans-serif; }
+        .font-volcanic { font-family: 'Orbitron', sans-serif; }
+        .font-ethereal { font-family: 'Orbitron', sans-serif; }
+        .font-void { font-family: 'Creepster', cursive; letter-spacing: 0.15em; }
+        .font-starfall { font-family: 'Orbitron', sans-serif; }
+        .font-bloodlust { font-family: 'Nosifer', cursive; font-size: 0.8em; }
+        .font-solar { font-family: 'Orbitron', sans-serif; }
+        .font-celestial { font-family: 'Orbitron', sans-serif; }
+        .font-phantom { font-family: 'Wallpoet', cursive; }
+        .font-glitched { font-family: 'Rubik Glitch', cursive; }
+        .font-galaxy { font-family: 'Orbitron', sans-serif; }
+        .font-abyssal { font-family: 'Cinzel', serif; font-weight: 900; }
+        .font-hyperion { font-family: 'Cinzel', serif; font-weight: 900; }
+        .font-nightmare { font-family: 'Creepster', cursive; letter-spacing: 0.1em; }
+        .font-chromatic { font-family: 'Orbitron', sans-serif; }
+        .font-nebula { font-family: 'Orbitron', sans-serif; font-weight: 900; }
+        .font-exotic { font-family: 'Press Start 2P', cursive; font-size: 0.6em; }
+        .font-matrix { font-family: 'Courier Prime', monospace; }
+        .font-chronos { font-family: 'Courier Prime', monospace; font-weight: 700; }
+        .font-archangel { font-family: 'Cinzel', serif; font-weight: 900; letter-spacing: 0.15em; }
+        .font-ragnarok { font-family: 'Cinzel', serif; font-weight: 900; }
+        .font-seraphim { font-family: 'Cinzel', serif; font-weight: 900; letter-spacing: 0.2em; }
+        .font-oblivion { font-family: 'Creepster', cursive; }
+        .font-omni { font-family: 'Cinzel', serif; font-weight: 900; letter-spacing: 0.3em; }
+
+        /* --- EXOTIC AURA GLOWS --- */
+        .txt-shadow-common { text-shadow: 0 0 10px rgba(160,160,160,0.6); }
+        .txt-shadow-uncommon { text-shadow: 0 0 15px rgba(74,222,128,0.7); }
+        .txt-shadow-rare { text-shadow: 0 0 20px rgba(96,165,250,0.8); }
+        .txt-shadow-epic { text-shadow: 0 0 25px rgba(192,132,252,0.9); }
+        .txt-shadow-crystal { text-shadow: 0 0 20px #f472b6, 0 0 10px #ffffff; }
+        .txt-shadow-blossom { text-shadow: 0 0 20px #fbcfe8, 0 0 10px #f43f5e; }
+        .txt-shadow-legendary { text-shadow: 0 0 30px #fde047, 0 0 10px #ffffff; }
+        .txt-shadow-glacier { text-shadow: 0 0 25px #99f6e4, 0 0 10px #ffffff; }
+        .txt-shadow-volcanic { text-shadow: 0 0 25px #f97316, 0 0 10px #ef4444; }
+        .txt-shadow-ethereal { text-shadow: 0 0 35px rgba(34,211,238,1), 0 0 15px #ffffff; }
+        .txt-shadow-void { text-shadow: 0 0 30px #dc2626, 0 0 15px #000000; }
+        .txt-shadow-starfall { text-shadow: 0 0 35px #ec4899, 0 0 15px #3b82f6; }
+        .txt-shadow-bloodlust { text-shadow: 0 0 25px #991b1b, 0 0 10px #ef4444; }
+        .txt-shadow-solar { text-shadow: 0 0 30px #f59e0b, 0 0 15px #ea580c; }
+        .txt-shadow-celestial { text-shadow: 0 0 35px #a855f7, 0 0 15px #ffffff; }
+        .txt-shadow-phantom { text-shadow: 0 0 30px #cbd5e1, 0 0 15px #f8fafc; opacity: 0.8; }
+        .txt-shadow-glitched { text-shadow: 3px 0 #ef4444, -3px 0 #3b82f6, 0 0 15px rgba(239, 68, 68, 0.4); }
+        .txt-shadow-galaxy { text-shadow: 0 0 35px #d946ef, 0 0 15px #2563eb; }
+        .txt-shadow-abyssal { text-shadow: 0 0 40px #2563eb, 0 0 15px #000000; }
+        .txt-shadow-hyperion { text-shadow: 0 0 40px #fbbf24, 0 0 20px #ffffff; }
+        .txt-shadow-nightmare { text-shadow: 0 0 30px #a855f7, 0 0 15px #22c55e; }
+        .txt-shadow-chromatic { text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+        .txt-shadow-nebula { text-shadow: 0 0 45px #ec4899, 0 0 20px #8b5cf6; }
+        .txt-shadow-exotic { text-shadow: 0 0 25px #10b981, 0 0 15px #ec4899; }
+        .txt-shadow-matrix { text-shadow: 0 0 25px #22c55e, 0 0 10px #15803d; }
+        .txt-shadow-chronos { text-shadow: 0 0 35px #eab308, 0 0 15px #06b6d4; }
+        .txt-shadow-archangel { text-shadow: 0 0 40px #fef08a, 0 0 15px #ffffff; }
+        .txt-shadow-ragnarok { text-shadow: 0 0 45px #dc2626, 0 0 20px #f97316; }
+        .txt-shadow-seraphim { text-shadow: 0 0 50px #ffffff, 0 0 25px #fde047; }
+        .txt-shadow-oblivion { text-shadow: 0 0 60px #000000, 0 0 30px #450a0a; color: #450a0a; }
+        .txt-shadow-omni { text-shadow: 0 0 60px #ffffff, 0 0 30px #a855f7, 0 0 15px #3b82f6; }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-effect::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes float-crystal {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating-crystal {
+            animation: float-crystal 4s ease-in-out infinite;
+        }
+
+        @keyframes custom-shake {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-4px, 3px); }
+            20% { transform: translate(4px, -3px); }
+            30% { transform: translate(-3px, -4px); }
+            40% { transform: translate(3px, 4px); }
+            50% { transform: translate(-4px, 1px); }
+            60% { transform: translate(4px, -1px); }
+            70% { transform: translate(-1px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            90% { transform: translate(-3px, -1px); }
+            100% { transform: translate(0, 0); }
+        }
+        .shake-active {
+            animation: custom-shake 0.1s infinite;
+        }
+
+        @keyframes toast-slide {
+            0% { transform: translateY(50px); opacity: 0; }
+            15% { transform: translateY(0); opacity: 1; }
+            85% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+        .toast-notify {
+            animation: toast-slide 3s ease-in-out forwards;
+        }
+
+        @keyframes star-spin-infinite {
+            0% { transform: rotate(0deg) scale(0.85); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(0.85); }
+        }
+        .cutscene-star-animate-spin {
+            animation: star-spin-infinite 8s linear infinite;
+        }
+
+        @keyframes potion-bob {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        .potion-spawn {
+            animation: potion-bob 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen relative w-full overflow-hidden select-none">
+
+    <!-- Background Space Dust particles canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 w-full h-full z-0 pointer-events-none"></canvas>
+
+    <!-- Floating Potion spawn layers -->
+    <div id="potion-spawn-layer" class="fixed inset-0 w-full h-full z-30 pointer-events-none"></div>
+
+    <!-- UI Overlay Toast Container -->
+    <div id="toast-container" class="fixed bottom-24 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Dynamic Buff active timers list -->
+    <div id="active-timers-container" class="fixed top-28 left-4 z-30 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Fullscreen Star Cutscene Screen -->
+    <div id="cutscene-layer" class="fixed inset-0 bg-black z-50 hidden flex flex-col items-center justify-center pointer-events-none">
+        <canvas id="cutscene-star-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
+        <div class="relative z-10 flex flex-col items-center justify-center">
+            <svg id="cutscene-star-svg" class="w-64 h-64 text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] cutscene-star-animate-spin" viewBox="0 0 100 100" fill="currentColor">
+                <!-- Spun dynamically in script -->
+            </svg>
+        </div>
+    </div>
+
+    <!-- Solid white flash layer -->
+    <div id="flash-overlay" class="fixed inset-0 bg-white opacity-0 pointer-events-none z-[60] transition-opacity duration-200"></div>
+
+    <!-- Main UI Layout wrapper -->
+    <div class="ui-layer flex flex-col h-full w-full z-20 p-3 md:p-6 justify-between pointer-events-none">
+        
+        <header class="w-full grid grid-cols-1 md:grid-cols-3 gap-3 items-center pointer-events-auto">
+            
+            <!-- Player Stats Box -->
+            <div class="glass-panel p-3.5 rounded-2xl flex flex-col gap-1 text-left order-2 md:order-1 shadow-md">
+                <div class="flex justify-between items-center border-b border-white/5 pb-1 mb-1">
+                    <span class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Player Stats</span>
+                    <span id="rolls-count-badge" class="text-emerald-400 text-[10px] bg-emerald-500/10 px-1.5 py-0.5 rounded font-mono">Active</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Total Rolls:</span>
+                    <span id="total-rolls" class="font-black text-white font-mono">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Luck Multiplier:</span>
+                    <span id="luck-multiplier" class="font-black text-amber-400 font-mono">1.0x</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-400">Roll Cooldown:</span>
+                    <span id="speed-indicator" class="font-black text-cyan-400 font-mono">1.00s</span>
+                </div>
+            </div>
+
+            <!-- Central Roll Reveal Deck -->
+            <div class="glass-panel-heavy p-3 rounded-2xl flex flex-col items-center justify-center border-amber-500/20 border text-center order-1 md:order-2 shadow-lg">
+                <div class="text-[9px] font-bold text-amber-500 uppercase tracking-widest mb-1 animate-pulse">--- LIVE ROLLING DECK ---</div>
+                <div id="roll-status-box" class="h-14 flex flex-col items-center justify-center transition-all overflow-hidden w-full">
+                    <div id="roll-name-output" class="text-2xl font-black tracking-wide text-gray-400 transition-all duration-75">READY TO ROLL</div>
+                    <div id="roll-chance-output" class="text-xs text-gray-500 mt-0.5 font-mono">Click roll below to start</div>
+                </div>
+                <!-- Roll Progress status bar -->
+                <div class="w-full bg-white/5 h-1 rounded-full mt-2 overflow-hidden">
+                    <div id="suspense-bar" class="bg-gradient-to-r from-amber-500 to-yellow-300 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Best unlocked highscore -->
+            <div class="glass-panel p-3.5 rounded-2xl flex flex-col justify-between h-full order-3 shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Record Pull</div>
+                        <div id="record-aura-name" class="text-sm font-black text-white truncate max-w-[150px]">None</div>
+                    </div>
+                    <button onclick="toggleAdminPanel()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 px-2 py-1.5 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                        ⚙️ Dev Panel
+                    </button>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="toggleCrafting()" class="flex-1 glass-panel text-xs hover:bg-white/5 py-1.5 rounded-lg border border-white/5 font-bold transition-all">Forge & Brew</button>
+                    <button onclick="toggleInventory()" class="flex-1 glass-panel text-xs hover:bg-white/5 py-1.5 rounded-lg border border-white/5 font-bold transition-all">Bag & Pouches</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Pedestal Chamber -->
+        <main class="flex-1 flex flex-col items-center justify-center relative my-4">
+            
+            <div class="relative flex flex-col items-center justify-center w-full h-[50vh]">
+                
+                <!-- Floating equipped labels -->
+                <div class="absolute top-4 text-center z-10">
+                    <span class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold block mb-1">Equipped Aura</span>
+                    <h2 id="equipped-name" class="text-4xl md:text-6xl font-black uppercase tracking-widest text-shadow-common font-common">Common</h2>
+                    <span id="equipped-rarity" class="text-xs text-gray-400 font-mono mt-1 block">Chance: 1 in 1</span>
+                </div>
+
+                <!-- Core pedestal visual -->
+                <div class="relative w-80 h-80 flex items-center justify-center">
+                    <div class="absolute bottom-6 w-44 h-8 bg-gradient-to-t from-white/10 to-transparent border-t border-white/15 rounded-[100%] flex items-center justify-center">
+                        <div class="w-36 h-6 bg-gradient-to-b from-cyan-500/10 to-transparent blur-sm rounded-full animate-pulse"></div>
+                    </div>
+                    
+                    <div id="central-crystal" class="floating-crystal absolute bottom-12 w-20 h-32 flex flex-col items-center justify-center transition-all duration-500">
+                        <svg class="w-full h-full drop-shadow-[0_0_25px_rgba(255,255,255,0.25)]" viewBox="0 0 100 150" fill="none">
+                            <defs>
+                                <linearGradient id="crystalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                                    <stop offset="50%" stop-color="#888899" stop-opacity="0.5"/>
+                                    <stop offset="100%" stop-color="#222233" stop-opacity="0.8"/>
+                                </linearGradient>
+                            </defs>
+                            <polygon points="50,10 80,45 50,140" fill="url(#crystalGrad)"/>
+                            <polygon points="50,10 20,45 50,140" fill="url(#crystalGrad)" opacity="0.8"/>
+                            <polygon points="20,45 50,45 50,140" fill="#ffffff" opacity="0.25"/>
+                            <polygon points="80,45 50,45 50,140" fill="#000000" opacity="0.3"/>
+                            <ellipse cx="50" cy="55" rx="15" ry="25" id="crystal-core" fill="#ffffff" class="transition-all" opacity="0.75" filter="blur(4px)"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Installed modifiers indicators -->
+                <div class="absolute bottom-4 flex gap-2 pointer-events-auto">
+                    <div id="eq-luck-gear" class="glass-panel text-[10px] text-gray-400 font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
+                        <div class="w-2 h-2 rounded-full bg-red-500/40"></div> No Luck Gear
+                    </div>
+                    <div id="eq-speed-gear" class="glass-panel text-[10px] text-gray-400 font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-md">
+                        <div class="w-2 h-2 rounded-full bg-red-500/40"></div> No Cooldown Gear
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Main Rolling panel -->
+        <footer class="w-full flex flex-col gap-3 justify-center items-center max-w-2xl mx-auto pb-4 pointer-events-auto">
+            
+            <div class="w-full flex justify-between items-center px-4 py-1.5 glass-panel rounded-xl max-w-md shadow">
+                <span class="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Double Luck Progress</span>
+                <div class="flex items-center gap-2">
+                    <div class="w-24 bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div id="lucky-roll-bar" class="bg-gradient-to-r from-emerald-500 to-green-300 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                    <span id="lucky-roll-tracker" class="text-xs text-green-400 font-mono font-black">Roll 0/10</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-3 w-full justify-center items-center">
+                <button id="btn-roll" onclick="manualRoll()" class="relative overflow-hidden group bg-gradient-to-r from-white via-gray-100 to-gray-300 text-black font-black text-2xl py-3.5 px-10 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_35px_rgba(255,255,255,0.35)] hover:scale-[1.03] active:scale-[0.97] transition-all w-full md:w-56 select-none border-b-4 border-gray-400">
+                    <span id="roll-btn-text" class="relative z-10 tracking-wider">ROLL</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[shimmer_1.5s_infinite] -skew-x-12 translate-x-[-100%]"></div>
+                </button>
+                
+                <button id="btn-autoroll" onclick="toggleAutoRoll()" class="glass-panel text-white font-bold text-base py-3.5 px-8 rounded-2xl hover:bg-white/10 active:scale-95 transition-all w-full md:w-48 flex items-center justify-center gap-2 select-none">
+                    <div id="autoroll-indicator" class="w-3 h-3 rounded-full bg-red-500 transition-all"></div>
+                    <span>Auto-Roll</span>
+                </button>
+            </div>
+
+        </footer>
+
+    </div>
+
+    <!-- DOUBLE-TABBED INVENTORY & SETTINGS PANEL (Overlap Resistant) -->
+    <div id="inventory-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 hidden items-center justify-center p-4">
+        <div class="glass-panel-heavy w-full max-w-2xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl relative">
+            
+            <!-- STICKY HEADER & STATIC SETTINGS (Never overlaps, strictly on top) -->
+            <div class="p-4 border-b border-white/10 flex flex-col gap-3 bg-black/95 z-30 sticky top-0">
+                <div class="flex justify-between items-center">
+                    <div class="flex gap-4">
+                        <button id="inv-tab-auras" onclick="switchInventoryTab('auras')" class="text-sm sm:text-xl font-black border-b-2 border-amber-500 pb-1 uppercase tracking-wide">Aura Collection</button>
+                        <button id="inv-tab-potions" onclick="switchInventoryTab('potions')" class="text-sm sm:text-xl font-black text-gray-500 pb-1 uppercase tracking-wide hover:text-white transition-colors">Potion Pouch</button>
+                    </div>
+                    <button onclick="toggleInventory()" class="text-gray-400 hover:text-white font-bold text-2xl w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all">&times;</button>
+                </div>
+                
+                <!-- Persistent Configurations Block (Stops elements flowing underneath) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-white/5 p-3 rounded-xl border border-white/5 items-center">
+                    <!-- Cutscene Selector -->
+                    <div class="flex flex-col gap-1">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Cutscene Rarity threshold:</span>
+                        <select id="cutscene-filter-select" onchange="updateCutsceneFilter(this.value)" class="bg-black border border-white/15 rounded px-2 py-1 text-[11px] font-bold text-white focus:outline-none focus:border-amber-500">
+                            <option value="1000">Show All (1 in 1k+)</option>
+                            <option value="100000">Ethereal+ (1 in 10k+)</option>
+                            <option value="1000000">Glitched+ (1 in 1M+)</option>
+                            <option value="999999999">Disable All Cutscenes</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Performance Toggle -->
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="disable-sparks-toggle" onchange="toggleDisableSparks(this.checked)" class="w-4 h-4 rounded border-white/15 bg-black text-amber-500 focus:ring-0 cursor-pointer">
+                        <label for="disable-sparks-toggle" class="text-[9px] font-bold text-gray-300 uppercase tracking-wider cursor-pointer">Disable Spark Bursts</label>
+                    </div>
+
+                    <!-- Hard Reset Button (Protected at the top of settings pane) -->
+                    <button onclick="wipeData()" class="bg-red-950/60 hover:bg-red-600 text-red-200 hover:text-white px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all border border-red-800/40 text-center shadow-sm">
+                        ⚠️ Hard Reset Save
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Content - Auras list -->
+            <div id="inventory-list" class="flex-1 max-h-[50vh] overflow-y-auto p-4 flex flex-col gap-2.5 z-10">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Scrollable Content - Potions list -->
+            <div id="potion-inventory-list" class="flex-1 max-h-[50vh] overflow-y-auto p-4 hidden flex-col gap-2.5 z-10">
+                <!-- Populated via JS -->
+            </div>
+
+            <div class="p-4 border-t border-white/10 bg-white/5 text-[10px] text-gray-400 text-center">
+                Configure active visual parameters. Stack timing benefits dynamically.
+            </div>
+
+        </div>
+    </div>
+
+    <!-- DOUBLE-TABBED FORGING & BREWING PANEL (Large Spacious Cards, No Dropdowns) -->
+    <div id="crafting-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 hidden items-center justify-center p-4">
+        <div class="glass-panel-heavy w-full max-w-2xl max-h-[85vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+            
+            <!-- Modal Headers -->
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <div class="flex gap-4">
+                    <button id="craft-tab-gears" onclick="switchCraftTab('gears')" class="text-sm sm:text-xl font-black border-b-2 border-cyan-400 pb-1 uppercase tracking-wide">Gears Forge</button>
+                    <button id="craft-tab-potions" onclick="switchCraftTab('potions')" class="text-sm sm:text-xl font-black text-gray-500 pb-1 uppercase tracking-wide hover:text-white transition-colors">Potion Brewing</button>
+                </div>
+                <button onclick="toggleCrafting()" class="text-gray-400 hover:text-white font-bold text-2xl w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all">&times;</button>
+            </div>
+
+            <!-- Content Area - Gear Forge Recipe List (Fully Scrollable, Large Cards) -->
+            <div id="crafting-list" class="flex-1 max-h-[55vh] overflow-y-auto p-4 flex flex-col gap-4">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Content Area - Potion Brewing list (Fully Scrollable, Large Cards) -->
+            <div id="brewing-list" class="flex-1 max-h-[55vh] overflow-y-auto p-4 hidden flex-col gap-4">
+                <!-- Populated via JS -->
+            </div>
+
+            <div class="p-4 border-t border-white/10 bg-white/5 text-[10px] text-center text-gray-400">
+                Forge materials will burn lower tier duplicates out of storage permanently. All options fully visible.
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CHEAT COMMAND MODAL -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="glass-panel-heavy w-full max-w-md rounded-2xl flex flex-col overflow-hidden border-red-500/30 border shadow-2xl">
+            
+            <div class="p-4 border-b border-red-500/20 flex justify-between items-center bg-red-950/20">
+                <div class="flex items-center gap-2 text-red-400">
+                    <span class="text-lg">⚙️</span>
+                    <h2 class="text-lg font-black tracking-widest uppercase">CREATOR CONTROL PANEL</h2>
+                </div>
+                <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-white font-bold text-2xl w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all">&times;</button>
+            </div>
+
+            <div class="p-5 flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
+                
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs text-gray-300 font-bold flex justify-between">
+                        <span>Base Luck Multiplier:</span>
+                        <span id="admin-luck-display" class="text-red-400 font-mono">1.0x</span>
+                    </label>
+                    <input type="range" id="admin-luck-range" min="1" max="100000" value="1" step="1" oninput="updateAdminLuckValue(this.value)" class="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-red-500">
+                    <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+                        <span>1x</span>
+                        <span>1k(Rare)</span>
+                        <span>10k(Void)</span>
+                        <span>100k(Glitched)</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setAdminLuckPreset(1)" class="bg-white/5 hover:bg-white/10 border border-white/5 py-1.5 text-[10px] rounded font-bold transition-all">Reset (1x)</button>
+                    <button onclick="setAdminLuckPreset(1000)" class="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 py-1.5 text-[10px] rounded font-bold text-amber-300 transition-all">Gold Luck (1k x)</button>
+                    <button onclick="setAdminLuckPreset(10000000)" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 py-1.5 text-[10px] rounded font-bold text-red-400 transition-all">God Cheat (10M x)</button>
+                </div>
+
+                <hr class="border-white/5">
+
+                <div class="flex flex-col gap-2">
+                    <span class="text-xs font-bold text-gray-300">Operations Commands:</span>
+                    
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="giveAdminRolls(1000)" class="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/10 p-2 text-xs font-bold rounded-lg transition-all">
+                            Add +1,000 Rolls
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mt-1">
+                        <button onclick="giveAdminPotion('lucky_spawn', 10)" class="bg-green-500/10 hover:bg-green-500/20 border border-green-500/10 py-1.5 text-xs rounded text-white font-bold">+10 Lucky Flasks</button>
+                        <button onclick="giveAdminPotion('speed_spawn', 10)" class="bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/10 py-1.5 text-xs rounded text-white font-bold">+10 Speed Flasks</button>
+                    </div>
+
+                    <button onclick="giveAllAuras(25)" class="bg-green-500/10 hover:bg-green-500/20 text-green-300 border border-green-500/20 py-2.5 text-xs font-bold rounded-lg transition-all">
+                        Inject +25 of ALL Auras (Instant Crafting)
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="p-4 border-t border-white/5 bg-black/40 text-center text-[10px] text-gray-500 font-mono">
+                Changes apply instantly. Have fun experimenting!
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GAME SCRIPTS -->
+    <script>
+        const AURAS = [
+            { id: "omni", name: "OMNI", chance: 250000000, class: "aura-omni", textClass: "txt-shadow-omni font-omni", colors: ['#ffffff', '#a855f7', '#3b82f6', '#fde047'], sound: 'archangel' },
+            { id: "oblivion", name: "OBLIVION", chance: 150000000, class: "aura-oblivion", textClass: "txt-shadow-oblivion font-oblivion", colors: ['#000000', '#450a0a', '#170000'], sound: 'void' },
+            { id: "seraphim", name: "SERAPHIM", chance: 100000000, class: "aura-seraphim", textClass: "txt-shadow-seraphim font-seraphim", colors: ['#ffffff', '#fde047', '#e2e8f0'], sound: 'archangel' },
+            { id: "ragnarok", name: "RAGNAROK", chance: 75000000, class: "aura-ragnarok", textClass: "txt-shadow-ragnarok font-ragnarok", colors: ['#dc2626', '#f97316', '#450a0a'], sound: 'void' },
+            { id: "archangel", name: "ARCHANGEL", chance: 50000000, class: "aura-archangel", textClass: "txt-shadow-archangel font-archangel", colors: ['#fef08a', '#ffffff', '#ca8a04'], sound: 'archangel' },
+            { id: "chronos", name: "CHRONOS", chance: 35000000, class: "aura-chronos", textClass: "txt-shadow-chronos font-chronos", colors: ['#eab308', '#06b6d4', '#1e293b'], sound: 'celestial' },
+            { id: "matrix", name: "MATRIX", chance: 25000000, class: "aura-matrix", textClass: "txt-shadow-matrix font-matrix", colors: ['#22c55e', '#15803d', '#14532d'], sound: 'matrix' },
+            { id: "exotic", name: "EXOTIC", chance: 20000000, class: "aura-exotic", textClass: "txt-shadow-exotic font-exotic", colors: ['#10b981', '#ec4899', '#fde047'], sound: 'matrix' },
+            { id: "nebula", name: "NEBULA", chance: 15000000, class: "aura-nebula", textClass: "txt-shadow-nebula font-nebula", colors: ['#ec4899', '#8b5cf6', '#4c1d95'], sound: 'galaxy' },
+            { id: "chromatic", name: "CHROMATIC", chance: 10000000, class: "aura-chromatic", textClass: "txt-shadow-chromatic font-chromatic", colors: ['#ff007f', '#00ff7f', '#7f00ff', '#00ffff'], sound: 'chromatic' },
+            { id: "nightmare", name: "NIGHTMARE", chance: 8000000, class: "aura-nightmare", textClass: "txt-shadow-nightmare font-nightmare", colors: ['#a855f7', '#22c55e', '#581c87'], sound: 'void' },
+            { id: "hyperion", name: "HYPERION", chance: 6000000, class: "aura-hyperion", textClass: "txt-shadow-hyperion font-hyperion", colors: ['#fbbf24', '#ffffff', '#f59e0b'], sound: 'solar' },
+            { id: "abyssal", name: "ABYSSAL", chance: 5000000, class: "aura-abyssal", textClass: "txt-shadow-abyssal font-abyssal", colors: ['#3b82f6', '#000000', '#1e3a8a'], sound: 'abyssal' },
+            { id: "galaxy", name: "GALAXY", chance: 1500000, class: "aura-galaxy", textClass: "txt-shadow-galaxy font-galaxy", colors: ['#d946ef', '#2563eb', '#1e1b4b'], sound: 'galaxy' },
+            { id: "glitched", name: "GLITCHED", chance: 1000000, class: "aura-glitched", textClass: "txt-shadow-glitched font-glitched", colors: ['#ef4444', '#3b82f6', '#ffffff'], sound: 'glitch' },
+            { id: "phantom", name: "PHANTOM", chance: 500000, class: "aura-phantom", textClass: "txt-shadow-phantom font-phantom", colors: ['#cbd5e1', '#f8fafc', '#94a3b8'], sound: 'heavenly' },
+            { id: "celestial", name: "CELESTIAL", chance: 250000, class: "aura-celestial", textClass: "txt-shadow-celestial font-celestial", colors: ['#a855f7', '#3b82f6', '#e0f2fe'], sound: 'celestial' },
+            { id: "bloodlust", name: "BLOODLUST", chance: 150000, class: "aura-bloodlust", textClass: "txt-shadow-bloodlust font-bloodlust", colors: ['#991b1b', '#ef4444', '#fca5a5'], sound: 'void' },
+            { id: "starfall", name: "STARFALL", chance: 100000, class: "aura-starfall", textClass: "txt-shadow-starfall font-starfall", colors: ['#ec4899', '#3b82f6', '#a855f7'], sound: 'cosmic' },
+            { id: "void", name: "VOID", chance: 50000, class: "aura-void", textClass: "txt-shadow-void font-void", colors: ['#dc2626', '#000000', '#170000'], sound: 'void' },
+            { id: "blossom", name: "BLOSSOM", chance: 25000, class: "aura-blossom", textClass: "txt-shadow-blossom font-blossom", colors: ['#fbcfe8', '#f43f5e', '#fda4af'], sound: 'heavenly' },
+            { id: "ethereal", name: "ETHEREAL", chance: 10000, class: "aura-ethereal", textClass: "txt-shadow-ethereal font-ethereal", colors: ['#22d3ee', '#ffffff', '#0891b2'], sound: 'heavenly' },
+            { id: "crystal", name: "CRYSTAL", chance: 7500, class: "aura-crystal", textClass: "txt-shadow-crystal font-crystal", colors: ['#f472b6', '#ffffff', '#db2777'], sound: 'glacier' },
+            { id: "volcanic", name: "VOLCANIC", chance: 5000, class: "aura-volcanic", textClass: "txt-shadow-volcanic font-volcanic", colors: ['#f97316', '#ef4444', '#f1f5f9'], sound: 'volcanic' },
+            { id: "glacier", name: "GLACIER", chance: 1000, class: "aura-glacier", textClass: "txt-shadow-glacier font-glacier", colors: ['#99f6e4', '#0d9488', '#ffffff'], sound: 'glacier' },
+            { id: "legendary", name: "LEGENDARY", chance: 250, class: "aura-legendary", textClass: "txt-shadow-legendary font-legendary", colors: ['#fde047', '#eab308', '#ffffff'], sound: 'epic' },
+            { id: "epic", name: "EPIC", chance: 50, class: "aura-epic", textClass: "txt-shadow-epic font-epic", colors: ['#c084fc', '#d8b4fe', '#a855f7'], sound: 'rare' },
+            { id: "rare", name: "RARE", chance: 10, class: "aura-rare", textClass: "txt-shadow-rare font-rare", colors: ['#60a5fa', '#93c5fd', '#2563eb'], sound: 'standard' },
+            { id: "uncommon", name: "UNCOMMON", chance: 3, class: "aura-uncommon", textClass: "txt-shadow-uncommon font-uncommon", colors: ['#4ade80', '#86efac', '#16a34a'], sound: 'common' },
+            { id: "dust", name: "DUST", chance: 2, class: "aura-common", textClass: "txt-shadow-common font-common", colors: ['#78716c', '#a8a29e', '#44403c'], sound: 'common' },
+            { id: "common", name: "COMMON", chance: 1, class: "aura-common", textClass: "txt-shadow-common font-common", colors: ['#9ca3af', '#e5e7eb', '#4b5563'], sound: 'common' }
+        ];
+
+        const RECIPES = [
+            { id: "luck_glove", name: "Luck Glove", desc: "Spins and aligns energy particles to boost raw luck stats.", luckBonus: 0.50, speedBonus: 0, requirements: { uncommon: 15, rare: 5 }, color: "from-amber-500 to-yellow-500 border-amber-500/30", type: "LUCK" },
+            { id: "chrono_coil", name: "Chrono Coil Watch", desc: "Speeds up standard temporal timelines to roll faster.", luckBonus: 0, speedBonus: 0.25, requirements: { uncommon: 10, rare: 8, epic: 2 }, color: "from-cyan-500 to-blue-500 border-cyan-500/30", type: "SPEED" },
+            { id: "solar_badge", name: "Solar Core Badge", desc: "Empowers rolls using core solar flares.", luckBonus: 1.50, speedBonus: 0.10, requirements: { rare: 15, epic: 6, legendary: 2 }, color: "from-orange-500 to-amber-500 border-orange-500/30", type: "LUCK" },
+            { id: "glacier_shield", name: "Glacier Shield Plate", desc: "Protective ice shield which doubles luck density.", luckBonus: 2.00, speedBonus: 0, requirements: { epic: 10, legendary: 3, glacier: 1 }, color: "from-teal-500 to-emerald-400 border-teal-500/30", type: "LUCK" },
+            { id: "ethereal_gauntlet", name: "Ethereal Gauntlet", desc: "Forged with heavenly aura strings, improving speed and luck.", luckBonus: 3.00, speedBonus: 0.20, requirements: { legendary: 5, glacier: 2, ethereal: 1 }, color: "from-indigo-500 to-purple-500 border-indigo-500/30", type: "HYBRID" },
+            { id: "eclipse_core", name: "Eclipse Gravitational Core", desc: "Draws in rare auras via cosmic light and dark bending forces.", luckBonus: 4.50, speedBonus: 0.30, requirements: { volcanic: 1, void: 1 }, color: "from-red-600 to-rose-500 border-red-500/30", type: "HYBRID" },
+            { id: "celestial_emblem", name: "Celestial Star Emblem", desc: "Premium end-game gadget granting ultimate alignment.", luckBonus: 6.00, speedBonus: 0.40, requirements: { legendary: 8, celestial: 1 }, color: "from-fuchsia-500 to-pink-500 border-pink-500/30", type: "HYBRID" },
+            { id: "archangel_wings", name: "Archangel Divinity Wings", desc: "Divine feathers that dramatically warp luck calculations.", luckBonus: 25.00, speedBonus: 0.50, requirements: { legendary: 10, glacier: 1, ethereal: 1, archangel: 1 }, color: "from-yellow-300 to-amber-200 border-yellow-300/40", type: "HYBRID" }
+        ];
+
+        const POTION_RECIPES = [
+            { id: "fortune_1", name: "Fortune Potion I", desc: "Provides +50% Luck for 5 minutes.", duration: 300, bonus: 0.50, type: "LUCK", requirements: { lucky_spawn: 10 }, color: "from-amber-500 to-yellow-400 border-amber-500/30" },
+            { id: "fortune_2", name: "Fortune Potion II", desc: "Provides +75% Luck for 5 minutes.", duration: 300, bonus: 0.75, type: "LUCK", requirements: { lucky_spawn: 25 }, color: "from-orange-500 to-amber-500 border-orange-500/30" },
+            { id: "fortune_3", name: "Fortune Potion III", desc: "Provides +100% Luck for 5 minutes.", duration: 300, bonus: 1.00, type: "LUCK", requirements: { lucky_spawn: 50 }, color: "from-red-500 to-orange-500 border-red-500/30" },
+            { id: "haste_1", name: "Haste Potion I", desc: "Provides +20% Roll Speed for 5 minutes.", duration: 300, bonus: 0.20, type: "SPEED", requirements: { speed_spawn: 10 }, color: "from-blue-500 to-cyan-400 border-blue-500/30" },
+            { id: "haste_2", name: "Haste Potion II", desc: "Provides +25% Roll Speed for 5 minutes.", duration: 300, bonus: 0.25, type: "SPEED", requirements: { speed_spawn: 25 }, color: "from-indigo-500 to-blue-500 border-indigo-500/30" },
+            { id: "haste_3", name: "Haste Potion III", desc: "Provides +30% Roll Speed for 5 minutes.", duration: 300, bonus: 0.30, type: "SPEED", requirements: { speed_spawn: 50 }, color: "from-purple-500 to-indigo-500 border-purple-500/30" },
+            { id: "bound", name: "Potion of Bound", desc: "Sets +5,000,000% Luck for your next single roll.", duration: null, type: "SINGLE_ROLL", bonus: 50000.0, requirements: { lucky_spawn: 10, rare: 1 }, color: "from-purple-600 to-fuchsia-500 border-fuchsia-500/40" },
+            { id: "heavenly", name: "Heavenly Potion", desc: "Sets +15,000,000% Luck for your next single roll.", duration: null, type: "SINGLE_ROLL", bonus: 150000.0, requirements: { lucky_spawn: 50, legendary: 1 }, color: "from-yellow-400 via-pink-500 to-purple-600 border-yellow-400/50" }
+        ];
+
+        // --- GAME ENGINE STATE ---
+        let state = {
+            totalRolls: 0,
+            rollsSinceLucky: 0,
+            inventory: { common: 1 },
+            bestAuraId: "common",
+            equippedAuraId: "common",
+            craftedGears: [],
+            equippedLuckGear: null,
+            equippedSpeedGear: null,
+            adminLuckMult: 1.0,
+            cutsceneFilter: 1000, 
+            disableSparks: false,
+            potions: {
+                lucky_spawn: 0,
+                speed_spawn: 0,
+                fortune_1: 0,
+                fortune_2: 0,
+                fortune_3: 0,
+                haste_1: 0,
+                haste_2: 0,
+                haste_3: 0,
+                bound: 0,
+                heavenly: 0
+            },
+            buffs: {
+                luckBonus: 0, 
+                luckTime: 0,  
+                speedBonus: 0, 
+                speedTime: 0, 
+                nextRollLuck: 0, 
+                nextRollCount: 0 
+            }
+        };
+
+        let isRolling = false;
+        let isCooldownActive = false;
+        let isAutoRolling = false;
+        let autoRollInterval = null;
+        let activeInventoryTab = 'auras';
+        let activeCraftTab = 'gears';
+        
+        // --- SYNTHESIZED PROCEDURAL SOUNDS ---
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSynthSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+
+                const now = audioCtx.currentTime;
+                const masterGain = audioCtx.createGain();
+                masterGain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1200, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.04);
+                    masterGain.gain.setValueAtTime(0.04, now);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                    osc.connect(masterGain);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } 
+                else if (type === 'coin_rattle') {
+                    const tones = [850, 1050, 1300, 1600, 1100, 1400, 1800];
+                    tones.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.035);
+                        
+                        const subGain = audioCtx.createGain();
+                        subGain.gain.setValueAtTime(0.05, now + i * 0.035);
+                        subGain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.035 + 0.12);
+                        
+                        osc.connect(subGain);
+                        subGain.connect(audioCtx.destination);
+                        osc.start(now + i * 0.035);
+                        osc.stop(now + i * 0.035 + 0.12);
+                    });
+                }
+                else if (type === 'star_glare') {
+                    const duration = 3.5;
+                    const osc1 = audioCtx.createOscillator();
+                    osc1.type = 'triangle';
+                    osc1.frequency.setValueAtTime(180, now);
+                    osc1.frequency.exponentialRampToValueAtTime(2800, now + duration);
+
+                    const osc2 = audioCtx.createOscillator();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(800, now);
+                    osc2.frequency.linearRampToValueAtTime(5000, now + duration);
+
+                    const g1 = audioCtx.createGain();
+                    g1.gain.setValueAtTime(0.015, now);
+                    g1.gain.linearRampToValueAtTime(0.07, now + duration * 0.85);
+                    g1.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                    osc1.connect(g1);
+                    osc2.connect(g1);
+                    g1.connect(audioCtx.destination);
+
+                    osc1.start(now);
+                    osc1.stop(now + duration);
+                    osc2.start(now);
+                    osc2.stop(now + duration);
+                }
+                else if (type === 'common') {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.15);
+                    masterGain.gain.setValueAtTime(0.06, now);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    osc.connect(masterGain);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } 
+                else if (type === 'standard') {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
+                    masterGain.gain.setValueAtTime(0.06, now);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.connect(masterGain);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } 
+                else if (type === 'rare') {
+                    [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+                        osc.frequency.exponentialRampToValueAtTime(100, now + 0.4);
+                        
+                        const oscGain = audioCtx.createGain();
+                        oscGain.gain.setValueAtTime(0.04, now);
+                        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                        
+                        osc.connect(oscGain);
+                        oscGain.connect(masterGain);
+                        osc.start(now);
+                        osc.stop(now + 0.4);
+                    });
+                } 
+                else if (type === 'epic' || type === 'glacier') {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(987.77, now);
+                    osc.frequency.exponentialRampToValueAtTime(1975.53, now + 0.6);
+                    masterGain.gain.setValueAtTime(0.06, now);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                    osc.connect(masterGain);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                } 
+                else if (type === 'potion_click') {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(1500, now + 0.15);
+                    masterGain.gain.setValueAtTime(0.06, now);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    osc.connect(masterGain);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } 
+                else if (type === 'suspense') {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(80, now);
+                    osc.frequency.linearRampToValueAtTime(320, now + 3.8);
+                    
+                    const lowPass = audioCtx.createBiquadFilter();
+                    lowPass.type = 'lowpass';
+                    lowPass.frequency.setValueAtTime(280, now);
+                    
+                    osc.connect(lowPass);
+                    lowPass.connect(masterGain);
+                    masterGain.gain.setValueAtTime(0.06, now);
+                    masterGain.gain.linearRampToValueAtTime(0.12, now + 3.8);
+                    masterGain.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
+                    osc.start(now);
+                    osc.stop(now + 4.0);
+                } 
+                else if (type === 'reveal_grand') {
+                    for (let i = 0; i < 4; i++) {
+                        const osc = audioCtx.createOscillator();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(150 + i * 110, now);
+                        osc.frequency.exponentialRampToValueAtTime(80 + i * 40, now + 1.8);
+                        
+                        const g = audioCtx.createGain();
+                        g.gain.setValueAtTime(0.06, now);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+                        
+                        osc.connect(g);
+                        g.connect(masterGain);
+                        osc.start(now);
+                        osc.stop(now + 1.8);
+                    }
+                }
+            } catch (err) {
+                console.warn("Audio Context init/playback suspended", err);
+            }
+        }
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class GameParticle {
+            constructor(x, y, colors, isBackground = false) {
+                this.x = x;
+                this.y = y;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.isBackground = isBackground;
+                
+                if (isBackground) {
+                    this.vx = (Math.random() - 0.5) * 0.35;
+                    this.vy = (Math.random() - 0.5) * 0.35;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.life = 0.5 + Math.random() * 0.5;
+                    this.decay = Math.random() * 0.002 + 0.001;
+                } else {
+                    const angle = Math.random() * Math.PI * 2;
+                    const force = Math.random() * 3.5 + 1.5;
+                    this.vx = Math.cos(angle) * force;
+                    this.vy = Math.sin(angle) * force;
+                    this.size = Math.random() * 4.5 + 2;
+                    this.life = 1.0;
+                    this.decay = Math.random() * 0.012 + 0.008;
+                }
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+
+            draw() {
+                if (this.life <= 0) return;
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = this.isBackground ? 0 : 15;
+                ctx.shadowColor = this.color;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createBurst(colors, count = 35) {
+            // Respect performance optimization setting
+            if (state.disableSparks) return;
+            if (document.hidden) return;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            for (let i = 0; i < count; i++) {
+                particles.push(new GameParticle(centerX, centerY, colors, false));
+            }
+        }
+
+        let animTime = 0;
+        let matrixColumns = null;
+        let oceanBubbles = null;
+        let ragnarokEruptions = null;
+        let ragnarokMeteors = null;
+        let blossomPetals = null;
+        let bloodDrops = null;
+
+        function renderCustomAuraEffects() {
+            animTime += 0.015;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const auraId = state.equippedAuraId;
+            
+            ctx.save();
+
+            if (auraId === 'uncommon') {
+                ctx.fillStyle = 'rgba(74, 222, 128, 0.07)';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY + 30, 90 + Math.sin(animTime * 3) * 8, 0, Math.PI * 2);
+                ctx.fill();
+                if (Math.random() < 0.15 && !document.hidden) {
+                    particles.push(new GameParticle(centerX + (Math.random() - 0.5) * 120, centerY + 80, ['#4ade80', '#ffffff'], false));
+                }
+            } 
+            else if (auraId === 'rare') {
+                ctx.strokeStyle = 'rgba(96, 165, 250, 0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.shadowColor = '#60a5fa';
+                ctx.shadowBlur = 10;
+                ctx.translate(centerX, centerY + 30);
+                ctx.rotate(animTime);
+                ctx.beginPath();
+                for (let i = 0; i < 4; i++) {
+                    const rot = (i * Math.PI) / 2;
+                    ctx.lineTo(Math.cos(rot) * 85, Math.sin(rot) * 85);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            } 
+            else if (auraId === 'epic') {
+                ctx.strokeStyle = 'rgba(192, 132, 252, 0.6)';
+                ctx.shadowColor = '#c084fc';
+                ctx.shadowBlur = 12;
+                ctx.lineWidth = 2;
+                const r = ((animTime * 65) % 150);
+                ctx.beginPath();
+                ctx.arc(centerX, centerY + 30, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            else if (auraId === 'legendary') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.strokeStyle = '#fde047';
+                ctx.shadowColor = '#eab308';
+                ctx.shadowBlur = 25;
+                ctx.lineWidth = 2.0;
+
+                // Rotational bands
+                ctx.save();
+                ctx.rotate(animTime * 1.5);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 75, 20, Math.PI / 6, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.rotate(-animTime * 1.2);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 85, 25, -Math.PI / 4, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+
+                if (Math.random() < 0.2 && !document.hidden) {
+                    particles.push(new GameParticle(centerX + (Math.random() - 0.5) * 110, centerY + (Math.random() - 0.5) * 110, ['#fde047', '#ffffff'], false));
+                }
+            }
+            else if (auraId === 'glacier') {
+                ctx.strokeStyle = 'rgba(153, 246, 228, 0.6)';
+                ctx.shadowColor = '#99f6e4';
+                ctx.shadowBlur = 15;
+                ctx.translate(centerX, centerY + 30);
+                for (let i = 0; i < 6; i++) {
+                    ctx.rotate(Math.PI / 3);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(0, 80);
+                    ctx.stroke();
+                }
+            }
+            else if (auraId === 'volcanic') {
+                if (Math.random() < 0.3 && !document.hidden) {
+                    const p = new GameParticle(centerX + (Math.random() - 0.5) * 60, centerY + 80, ['#f97316', '#ef4444'], false);
+                    p.vy = -Math.random() * 3 - 1;
+                    particles.push(p);
+                }
+            }
+            else if (auraId === 'crystal') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.strokeStyle = '#f472b6';
+                ctx.shadowColor = '#db2777';
+                ctx.shadowBlur = 15;
+                ctx.lineWidth = 2;
+                for(let k=0; k<3; k++) {
+                    ctx.save();
+                    ctx.rotate(animTime + (k * Math.PI*2/3));
+                    ctx.beginPath();
+                    ctx.moveTo(0, -90);
+                    ctx.lineTo(20, -50);
+                    ctx.lineTo(-20, -50);
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+            else if (auraId === 'ethereal') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.strokeStyle = 'rgba(34, 211, 238, 0.7)';
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 25;
+                ctx.lineWidth = 2.5;
+
+                ctx.beginPath();
+                ctx.ellipse(0, 15, 65, 12, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(0, -50, 35, 6, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                if (Math.random() < 0.35 && !document.hidden) {
+                    const p = new GameParticle(centerX + (Math.random() - 0.5) * 80, centerY + 50, ['#22d3ee', '#ffffff'], false);
+                    p.vy = -Math.random() * 2 - 1.5;
+                    particles.push(p);
+                }
+            }
+            else if (auraId === 'blossom') {
+                ctx.translate(centerX, centerY + 30);
+                if(!blossomPetals) blossomPetals = Array(20).fill(0).map(() => ({x: (Math.random()-0.5)*200, y: (Math.random()-0.5)*200, rot: Math.random()*Math.PI}));
+                ctx.fillStyle = '#fbcfe8';
+                ctx.shadowColor = '#f43f5e';
+                ctx.shadowBlur = 10;
+                blossomPetals.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot + animTime);
+                    ctx.beginPath();
+                    ctx.bezierCurveTo(10, -10, 15, 10, 0, 15);
+                    ctx.bezierCurveTo(-15, 10, -10, -10, 0, 0);
+                    ctx.fill();
+                    ctx.restore();
+                    p.y += 1.5;
+                    p.x += Math.sin(animTime + p.y*0.05);
+                    if(p.y > 150) { p.y = -150; p.x = (Math.random()-0.5)*200; }
+                });
+            }
+            else if (auraId === 'void') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.shadowColor = '#dc2626';
+                ctx.shadowBlur = 35;
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(0, 0, 90 + Math.sin(animTime * 10) * 4, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.fillStyle = '#030307';
+                ctx.beginPath();
+                ctx.arc(0, 0, 75, 0, Math.PI * 2);
+                ctx.fill();
+            } 
+            else if (auraId === 'starfall') {
+                if (Math.random() < 0.35 && !document.hidden) {
+                    const p = new GameParticle(Math.random() * canvas.width, 0, ['#ec4899', '#3b82f6', '#a855f7'], false);
+                    p.vx = -2.0; p.vy = 4.0;
+                    p.decay = 0.01;
+                    particles.push(p);
+                }
+            }
+            else if (auraId === 'bloodlust') {
+                ctx.translate(centerX, centerY + 30);
+                if(!bloodDrops) bloodDrops = Array(15).fill(0).map(() => ({x: (Math.random()-0.5)*120, y: -80, speed: Math.random()*3+1}));
+                ctx.fillStyle = '#991b1b';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 15;
+                bloodDrops.forEach(b => {
+                    ctx.beginPath();
+                    ctx.arc(b.x, b.y, 2, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.moveTo(b.x-2, b.y);
+                    ctx.lineTo(b.x, b.y-10);
+                    ctx.lineTo(b.x+2, b.y);
+                    ctx.fill();
+                    b.y += b.speed;
+                    if(b.y > 100) b.y = -80 + Math.random()*20;
+                });
+                ctx.beginPath(); ctx.arc(0, 0, 100 + Math.sin(animTime*8)*10, 0, Math.PI*2);
+                ctx.strokeStyle = 'rgba(153, 27, 27, 0.3)'; ctx.lineWidth = 5; ctx.stroke();
+            }
+            else if (auraId === 'celestial') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.rotate(animTime * 0.5);
+                ctx.shadowColor = '#a855f7';
+                ctx.shadowBlur = 25;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(-60, -60, 120, 120);
+                ctx.rotate(Math.PI/4);
+                ctx.strokeRect(-60, -60, 120, 120);
+            }
+            else if (auraId === 'phantom') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.strokeStyle = 'rgba(203, 213, 225, 0.6)';
+                ctx.shadowColor = '#f8fafc';
+                ctx.shadowBlur = 20;
+                ctx.lineWidth = 2;
+                for(let i=0; i<4; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo((Math.random()-0.5)*20, 100);
+                    ctx.bezierCurveTo(
+                        100*Math.sin(animTime+i), 50, 
+                        -100*Math.cos(animTime+i*2), -50, 
+                        (Math.random()-0.5)*20, -150
+                    );
+                    ctx.stroke();
+                }
+            }
+            else if (auraId === 'solar') {
+                ctx.translate(centerX, centerY + 30);
+                const g = ctx.createRadialGradient(0, 0, 5, 0, 0, 110);
+                g.addColorStop(0, 'rgba(245, 158, 11, 0.35)');
+                g.addColorStop(1, 'rgba(234, 88, 12, 0)');
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(0, 0, 110 + Math.sin(animTime * 5) * 15, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            else if (auraId === 'glitched') {
+                ctx.translate(centerX, centerY + 30);
+                // Aggressive random screen splitting offsets
+                if (Math.random() < 0.4) {
+                    ctx.translate((Math.random()-0.5)*20, (Math.random()-0.5)*20);
+                }
+                if (Math.random() < 0.3) {
+                    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(239, 68, 68, 0.6)' : 'rgba(59, 130, 246, 0.6)';
+                    ctx.fillRect(-150 + Math.random()*200, -100 + Math.random()*200, Math.random() * 120 + 20, Math.random() * 20 + 2);
+                }
+                // Erratic concentric glitch rings
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(0, 0, 90 + Math.random()*10, Math.random()*Math.PI, Math.random()*Math.PI*2);
+                ctx.stroke();
+                // Fast static scanlines flowing down
+                ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                for(let i=0; i<6; i++) {
+                    ctx.fillRect(-180, -150 + (animTime*150 + i*35)%300, 360, 4);
+                }
+            }
+            else if (auraId === 'galaxy') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.rotate(animTime * 0.8);
+                ctx.shadowColor = '#d946ef';
+                ctx.shadowBlur = 15;
+                for (let arm = 0; arm < 2; arm++) {
+                    ctx.save();
+                    ctx.rotate(arm * Math.PI);
+                    ctx.fillStyle = 'rgba(217, 70, 239, 0.8)';
+                    for (let step = 0; step < 15; step++) {
+                        const dist = step * 8;
+                        const angle = step * 0.15;
+                        ctx.beginPath();
+                        ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+            }
+            else if (auraId === 'abyssal') {
+                ctx.translate(centerX, centerY + 30);
+                
+                // Rotational central propeller blades
+                ctx.save();
+                ctx.rotate(animTime * 1.6);
+                ctx.fillStyle = '#020617';
+                ctx.strokeStyle = '#1d4ed8';
+                ctx.lineWidth = 3.5;
+                ctx.shadowColor = '#2563eb';
+                ctx.shadowBlur = 15;
+                for (let p = 0; p < 3; p++) {
+                    ctx.rotate((Math.PI * 2) / 3);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.quadraticCurveTo(-30, -50, 0, -100);
+                    ctx.quadraticCurveTo(30, -50, 0, 0);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+                ctx.restore();
+
+                // Upward floating bubbles (Ocean Theme)
+                if (!oceanBubbles) {
+                    oceanBubbles = Array(15).fill(0).map(() => ({ x: (Math.random() - 0.5) * 160, y: 150, r: Math.random() * 4 + 2, speed: Math.random() * 1.5 + 0.5 }));
+                }
+                ctx.strokeStyle = 'rgba(96, 165, 250, 0.6)';
+                ctx.lineWidth = 1;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = '#3b82f6';
+                oceanBubbles.forEach(b => {
+                    ctx.beginPath();
+                    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                    ctx.stroke();
+                    b.y -= b.speed;
+                    b.x += Math.sin(animTime + b.y * 0.05) * 0.35;
+                    if (b.y < -150) { 
+                        b.y = 150; 
+                        b.x = (Math.random() - 0.5) * 160; 
+                    }
+                });
+            }
+            else if (auraId === 'hyperion') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#fbbf24';
+                ctx.shadowBlur = 60;
+                ctx.beginPath(); ctx.arc(0, 0, 50, 0, Math.PI*2); ctx.fill();
+                
+                // Massive rotating sun rays
+                for(let r=0; r<8; r++) {
+                    ctx.save();
+                    ctx.rotate(animTime*0.4 + r*(Math.PI/4));
+                    ctx.fillStyle = 'rgba(251, 191, 36, 0.5)';
+                    ctx.beginPath(); 
+                    ctx.moveTo(0, -40); 
+                    ctx.lineTo(20, -250); 
+                    ctx.lineTo(-20, -250); 
+                    ctx.closePath(); 
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+            else if (auraId === 'nightmare') {
+                ctx.translate(centerX, centerY + 30);
+                // Aggressive Jagged Creeping Tendrils
+                ctx.strokeStyle = 'rgba(168, 85, 247, 0.8)';
+                ctx.shadowColor = '#22c55e';
+                ctx.shadowBlur = 25;
+                ctx.lineWidth = 3.5;
+                for (let i = 0; i < 6; i++) {
+                    ctx.save();
+                    ctx.rotate(animTime * 0.8 + (i * Math.PI / 3));
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(50 + Math.sin(animTime*3)*30, -60, -50, -100, 0, -160);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                // Floating Void Eyes
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#dc2626';
+                for(let j=0; j<3; j++) {
+                    const eyeX = Math.cos(animTime * 1.5 + j * 2.5) * 90;
+                    const eyeY = Math.sin(animTime * 1.2 + j * 2.5) * 90 - 30;
+                    ctx.beginPath();
+                    ctx.ellipse(eyeX, eyeY, 12, 6 + Math.sin(animTime*6)*4, 0, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.fillStyle = '#000000';
+                    ctx.beginPath(); ctx.arc(eyeX, eyeY, 3, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#ef4444'; // reset for next
+                }
+            }
+            else if (auraId === 'chromatic') {
+                ctx.translate(centerX, centerY + 30);
+                for (let i = 0; i < 12; i++) {
+                    const angle = animTime * 0.4 + (i * Math.PI / 6);
+                    const hue = (animTime * 60 + i * 30) % 360;
+                    ctx.strokeStyle = `hsla(${hue}, 100%, 55%, 0.35)`;
+                    ctx.lineWidth = 3 + Math.sin(animTime * 4 + i) * 1.5;
+                    ctx.shadowColor = `hsla(${hue}, 100%, 55%, 0.8)`;
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(Math.cos(angle) * 260, Math.sin(angle) * 260);
+                    ctx.stroke();
+                }
+
+                ctx.save();
+                ctx.rotate(-animTime * 1.5);
+                for (let j = 0; j < 5; j++) {
+                    const prismAngle = j * (Math.PI * 2 / 5);
+                    ctx.fillStyle = `hsla(${(animTime * 90 + j * 72) % 360}, 100%, 65%, 0.45)`;
+                    ctx.beginPath();
+                    ctx.arc(Math.cos(prismAngle) * 65, Math.sin(prismAngle) * 65, 7, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+            else if (auraId === 'nebula') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.shadowColor = '#ec4899';
+                ctx.shadowBlur = 40;
+                
+                // Deep swirling violet core dust storm
+                const radG = ctx.createRadialGradient(0, 0, 10, 0, 0, 160);
+                radG.addColorStop(0, 'rgba(139, 92, 246, 0.6)');
+                radG.addColorStop(0.5, 'rgba(236, 72, 153, 0.25)');
+                radG.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = radG;
+                ctx.save();
+                ctx.rotate(animTime * 0.6);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 160, 70, Math.PI / 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // High-speed orbital asteroid rings
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.save();
+                ctx.rotate(-animTime * 0.4);
+                ctx.beginPath(); ctx.ellipse(0, 0, 130, 40, 0, 0, Math.PI * 2); ctx.stroke();
+                for(let k=0; k<12; k++) {
+                    const angle = (k/12) * Math.PI * 2 + animTime * 1.5;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath(); ctx.arc(Math.cos(angle)*130, Math.sin(angle)*40, 3.5, 0, Math.PI*2); ctx.fill();
+                }
+                ctx.restore();
+            }
+            else if (auraId === 'exotic') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.strokeStyle = `hsl(${(animTime*120)%360}, 100%, 50%)`;
+                ctx.shadowColor = ctx.strokeStyle;
+                ctx.shadowBlur = 25;
+                ctx.lineWidth = 3.5;
+                
+                // Expanding pulsing diamond geometry
+                ctx.save();
+                ctx.rotate(Math.PI/4);
+                const scale = 70 + Math.sin(animTime*5)*25;
+                ctx.strokeRect(-scale, -scale, scale*2, scale*2);
+                ctx.restore();
+
+                // 3D Perspective Retro Grid Floor
+                ctx.save();
+                ctx.translate(0, 90);
+                ctx.scale(1, 0.25);
+                for(let r=0; r<6; r++) {
+                    const rad = 20 + r*35 + (animTime*60)%35;
+                    ctx.beginPath(); ctx.arc(0, 0, rad, 0, Math.PI*2); ctx.stroke();
+                }
+                ctx.restore();
+            }
+            else if (auraId === 'matrix') {
+                ctx.translate(centerX, centerY + 30);
+
+                const drawGear = (gx, gy, gr, teeth, rotationDir) => {
+                    ctx.save();
+                    ctx.translate(gx, gy);
+                    ctx.rotate(animTime * 1.2 * rotationDir);
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 2;
+                    ctx.shadowColor = '#22c55e';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, gr, 0, Math.PI * 2);
+                    ctx.stroke();
+                    for (let t = 0; t < teeth; t++) {
+                        ctx.rotate((Math.PI * 2) / teeth);
+                        ctx.strokeRect(-4, -gr - 6, 8, 8);
+                    }
+                    ctx.restore();
+                };
+
+                drawGear(-110, -20, 24, 8, 1);
+                drawGear(110, -20, 24, 8, -1);
+
+                if (!matrixColumns) {
+                    matrixColumns = Array(18).fill(0).map(() => Math.random() * -200);
+                }
+                ctx.fillStyle = 'rgba(34, 197, 94, 0.45)';
+                ctx.font = 'bold 11px monospace';
+                matrixColumns.forEach((y, x) => {
+                    const digit = Math.random() > 0.5 ? "1" : "0";
+                    ctx.fillText(digit, -130 + x * 15, y);
+                    matrixColumns[x] += 2.5;
+                    if (matrixColumns[x] > 180) {
+                        matrixColumns[x] = -100 - Math.random() * 100;
+                    }
+                });
+            }
+            else if (auraId === 'chronos') {
+                ctx.translate(centerX, centerY + 30);
+                ctx.strokeStyle = '#eab308';
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 25;
+                ctx.lineWidth = 3;
+
+                // Dual Clock Dial Rings
+                ctx.beginPath(); ctx.arc(0, 0, 115, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(0, 0, 100, 0, Math.PI * 2); ctx.stroke();
+                
+                // Orbiting Roman Numerals
+                ctx.fillStyle = '#06b6d4';
+                ctx.font = 'bold 18px "Courier Prime"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const numerals = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+                for(let n=0; n<12; n++) {
+                    const angle = (n/12) * Math.PI * 2 - Math.PI/2 + animTime * 0.25;
+                    ctx.fillText(numerals[n], Math.cos(angle)*135, Math.sin(angle)*135);
+                }
+
+                // Giant Golden Clock Hands
+                ctx.save();
+                ctx.rotate(animTime * 0.6); // Hour Hand
+                ctx.lineWidth = 6;
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -70); ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.rotate(-animTime * 2.5); // Minute Hand (Erratic reversed)
+                ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -95); ctx.stroke();
+                ctx.restore();
+            }
+            else if (auraId === 'archangel') {
+                ctx.translate(centerX, centerY + 30);
+
+                const drawDetailedWing = (side) => {
+                    ctx.save();
+                    ctx.scale(side, 1);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.strokeStyle = '#eab308';
+                    ctx.shadowColor = '#fef08a';
+                    ctx.shadowBlur = 30;
+                    ctx.lineWidth = 2.0;
+
+                    ctx.beginPath();
+                    ctx.moveTo(10, -40);
+                    ctx.bezierCurveTo(45, -110, 120, -90, 140, -40);
+                    ctx.bezierCurveTo(125, 5, 85, 30, 15, 5);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(254, 240, 138, 0.85)';
+                    ctx.beginPath();
+                    ctx.moveTo(15, -30);
+                    ctx.bezierCurveTo(40, -75, 90, -65, 100, -35);
+                    ctx.bezierCurveTo(90, -5, 60, 10, 15, -5);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.strokeStyle = 'rgba(202, 138, 4, 0.5)';
+                    ctx.lineWidth = 1.5;
+                    for (let f = 0; f < 6; f++) {
+                        ctx.beginPath();
+                        ctx.moveTo(30 + f * 15, -55 + f * 4);
+                        ctx.quadraticCurveTo(75 + f * 10, -10 + f * 10, 50 + f * 12, 15 + f * 10);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                };
+
+                drawDetailedWing(1); 
+                drawDetailedWing(-1);
+
+                ctx.strokeStyle = 'rgba(254, 240, 138, 0.12)';
+                ctx.shadowBlur = 0;
+                for (let r = 0; r < 12; r++) {
+                    const angle = animTime * 0.12 + (r * Math.PI / 6);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(Math.cos(angle) * 190, Math.sin(angle) * 190);
+                    ctx.stroke();
+                }
+            }
+            else if (auraId === 'ragnarok') {
+                ctx.translate(centerX, centerY + 30);
+                if (!ragnarokEruptions) {
+                    ragnarokEruptions = Array(15).fill(0).map(() => ({ x: 0, y: 0, vx: (Math.random() - 0.5) * 6, vy: -Math.random() * 8 - 4, r: Math.random() * 6 + 3, life: 1 }));
+                    ragnarokMeteors = Array(6).fill(0).map(() => ({x: Math.random()*400 - 200, y: -300 - Math.random()*300}));
+                }
+                
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 20;
+
+                // Base volcanic eruptions throwing magma
+                ragnarokEruptions.forEach(e => {
+                    ctx.fillStyle = `rgba(239, 68, 68, ${e.life})`;
+                    ctx.beginPath();
+                    ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+                    ctx.fill();
+                    e.x += e.vx; e.y += e.vy; e.life -= 0.015;
+                    if (e.life <= 0) {
+                        e.x = 0; e.y = 50; e.vx = (Math.random() - 0.5) * 5; e.vy = -Math.random() * 7 - 3; e.life = 1;
+                    }
+                });
+
+                // Falling high-speed fiery meteors from above
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#f97316';
+                ragnarokMeteors.forEach(m => {
+                    ctx.beginPath();
+                    ctx.moveTo(m.x, m.y);
+                    ctx.lineTo(m.x + 35, m.y - 70); // Tail
+                    ctx.stroke();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath(); ctx.arc(m.x, m.y, 4, 0, Math.PI*2); ctx.fill(); // Head
+                    m.x -= 10; m.y += 20; // Move diagonally
+                    if (m.y > 250) { 
+                        m.x = Math.random()*500 - 150; 
+                        m.y = -350 - Math.random()*250; 
+                    }
+                });
+            }
+            else if (auraId === 'seraphim') {
+                // Glorious 6 Wings radiating holy celestial configurations
+                ctx.translate(centerX, centerY + 30);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.strokeStyle = '#fef08a';
+                ctx.shadowColor = '#fde047';
+                ctx.shadowBlur = 35;
+                ctx.lineWidth = 2.0;
+
+                const drawWingsPair = (rotScale, angleOffset) => {
+                    for (let side of [-1, 1]) {
+                        ctx.save();
+                        ctx.scale(side, 1);
+                        ctx.rotate(angleOffset + Math.sin(animTime * 1.5) * 0.1);
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(10, -20);
+                        ctx.bezierCurveTo(40, -80, 110, -60, 130, -20);
+                        ctx.bezierCurveTo(110, 15, 70, 20, 10, 5);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                };
+
+                // Six individual wings layered structurally
+                drawWingsPair(1, -Math.PI / 4);
+                drawWingsPair(0.8, 0);
+                drawWingsPair(0.6, Math.PI / 4);
+                
+                // Concentric spinning halos
+                ctx.strokeStyle = 'rgba(254, 240, 138, 0.6)';
+                ctx.save();
+                ctx.rotate(animTime);
+                ctx.beginPath();
+                ctx.ellipse(0, -60, 45, 10, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+            else if (auraId === 'oblivion') {
+                ctx.translate(centerX, centerY + 30);
+                
+                // Pitch black core that consumes light
+                ctx.shadowBlur = 60;
+                ctx.shadowColor = '#450a0a';
+                ctx.fillStyle = '#000000';
+                ctx.beginPath(); 
+                ctx.arc(0, 0, 110 + Math.sin(animTime*6)*15, 0, Math.PI*2); 
+                ctx.fill();
+                
+                // Massive deep-red accretion disk
+                ctx.save();
+                ctx.rotate(animTime * 2.5);
+                ctx.scale(1, 0.25);
+                ctx.strokeStyle = 'rgba(220, 38, 38, 0.8)';
+                ctx.lineWidth = 18;
+                ctx.beginPath(); ctx.arc(0, 0, 160, 0, Math.PI*2); ctx.stroke();
+                ctx.restore();
+
+                // Reality distortion particles being sucked inwards
+                if(!document.hidden && Math.random() < 0.6) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 250;
+                    const p = new GameParticle(centerX + Math.cos(angle)*dist, centerY + Math.sin(angle)*dist + 30, ['#dc2626', '#000000', '#450a0a'], false);
+                    p.vx = -Math.cos(angle) * 5; 
+                    p.vy = -Math.sin(angle) * 5;
+                    particles.push(p);
+                }
+            }
+            else if (auraId === 'omni') {
+                ctx.translate(centerX, centerY + 30);
+                
+                // Spinning geometric mandalas reflecting all spectrums
+                for(let c=0; c<4; c++) {
+                    ctx.save();
+                    ctx.rotate(animTime * (c%2==0 ? 1.5 : -2.0) + c*(Math.PI/4));
+                    const hue = (animTime*60 + c*90)%360;
+                    ctx.strokeStyle = `hsl(${hue}, 100%, 65%)`;
+                    ctx.shadowColor = `hsl(${hue}, 100%, 65%)`;
+                    ctx.shadowBlur = 35;
+                    ctx.lineWidth = 3.5;
+                    
+                    ctx.beginPath();
+                    for(let v=0; v<8; v++) {
+                        ctx.rotate(Math.PI/4);
+                        ctx.lineTo(140, 0);
+                        ctx.lineTo(45, 45);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
+                // Extreme outward particle beams
+                if(!document.hidden) {
+                    particles.push(new GameParticle(centerX + (Math.random()-0.5)*250, centerY + (Math.random()-0.5)*250, ['#ffffff', '#a855f7', '#3b82f6', '#fde047', '#10b981'], false));
+                }
+            }
+
+            ctx.restore();
+        }
+
+        function masterGameLoop() {
+            ctx.fillStyle = '#030307';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Clean background space dust
+            if (particles.filter(p => p.isBackground).length < 50 && !document.hidden) {
+                particles.push(new GameParticle(Math.random() * canvas.width, Math.random() * canvas.height, ['#1e1b4b', '#030712'], true));
+            }
+
+            renderCustomAuraEffects();
+
+            if (document.hidden) {
+                particles = []; 
+            } else {
+                if (particles.length > 150) {
+                    particles = particles.slice(-150);
+                }
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.update();
+                    p.draw();
+                    if (p.life <= 0) particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(masterGameLoop);
+        }
+
+        window.onload = () => {
+            loadSavedEngineData();
+            masterGameLoop();
+            initAudio();
+        };
+
+        // --- BACKGROUND POTION SPONDING SYSTEM ---
+        setInterval(() => {
+            if (Math.random() < 0.45 && !document.hidden) { 
+                spawnInteractivePotion();
+            }
+        }, 12000);
+
+        function spawnInteractivePotion() {
+            const layer = document.getElementById('potion-spawn-layer');
+            const activePotions = layer.querySelectorAll('.potion-interactive-item');
+            if (activePotions.length >= 3) return; 
+
+            const potionType = Math.random() > 0.5 ? 'lucky_spawn' : 'speed_spawn';
+            const color = potionType === 'lucky_spawn' ? '#22c55e' : '#3b82f6';
+            const glyph = potionType === 'lucky_spawn' ? '🍀' : '⚡';
+            
+            const pot = document.createElement('div');
+            pot.className = 'potion-interactive-item absolute cursor-pointer pointer-events-auto transition-all duration-300 transform scale-0 z-30';
+            
+            const rx = Math.floor(Math.random() * 70 + 15); 
+            const ry = Math.floor(Math.random() * 50 + 25); 
+            pot.style.left = `${rx}%`;
+            pot.style.top = `${ry}%`;
+            pot.style.color = color;
+
+            pot.innerHTML = `
+                <div class="potion-spawn flex flex-col items-center justify-center bg-black/75 border border-white/20 p-2.5 rounded-full backdrop-blur-md">
+                    <svg class="w-10 h-10 animate-pulse" viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50,15 L50,30 L30,85 C28,90 32,95 38,95 L62,95 C68,95 72,90 70,85 L50,30 Z" />
+                    </svg>
+                    <span class="absolute text-xs mt-1.5 font-black">${glyph}</span>
+                </div>
+            `;
+
+            pot.onclick = (e) => {
+                e.stopPropagation();
+                collectSpawnedPotion(potionType);
+                pot.classList.add('scale-0');
+                setTimeout(() => pot.remove(), 300);
+            };
+
+            layer.appendChild(pot);
+            setTimeout(() => pot.classList.remove('scale-0'), 100);
+
+            setTimeout(() => {
+                if (pot.parentElement) {
+                    pot.classList.add('scale-0');
+                    setTimeout(() => pot.remove(), 300);
+                }
+            }, 14000);
+        }
+
+        function collectSpawnedPotion(type) {
+            playSynthSound('potion_click');
+            state.potions[type] = (state.potions[type] || 0) + 1;
+            const name = type === 'lucky_spawn' ? 'Lucky Potion' : 'Speed Potion';
+            showNotification("🧪 POTION SECURED", `Found a ${name} in the cosmic space!`, "from-green-500 to-emerald-400");
+            saveEngineState();
+        }
+
+        async function runAuraRevealCutscene(rolledAura) {
+            isRolling = true;
+            playSynthSound('suspense');
+            playSynthSound('star_glare'); 
+
+            const layer = document.getElementById('cutscene-layer');
+            const svg = document.getElementById('cutscene-star-svg');
+            const overlay = document.getElementById('flash-overlay');
+
+            let starPath = "";
+            let starColor = rolledAura.colors[0];
+            
+            // Check threshold for 8-tailed star
+            if (rolledAura.chance >= 1000000) {
+                starPath = `
+                    M 50,0 L 53,35 L 85,15 L 65,47 L 100,50 L 65,53 L 85,85 L 53,65 L 50,100 L 47,65 L 15,85 L 35,53 L 0,50 L 35,47 L 15,15 L 47,35 Z
+                `;
+            } else {
+                starPath = `
+                    M 50,0 L 55,43 L 100,50 L 55,57 L 50,100 L 45,57 L 0,50 L 45,43 Z
+                `;
+            }
+
+            svg.innerHTML = `<path d="${starPath}" fill="${starColor}" />`;
+            svg.className = "w-64 h-64 cutscene-star-animate-spin";
+            svg.style.filter = `drop-shadow(0 0 50px ${starColor})`;
+
+            const cStar = document.getElementById('cutscene-star-canvas');
+            const cCtx = cStar.getContext('2d');
+            cStar.width = window.innerWidth;
+            cStar.height = window.innerHeight;
+            
+            let starsList = [];
+            for (let i = 0; i < 40; i++) {
+                starsList.push({ x: Math.random() * cStar.width, y: Math.random() * cStar.height, size: Math.random() * 2 + 1, alpha: Math.random() });
+            }
+
+            let cutsceneInterval = setInterval(() => {
+                cCtx.fillStyle = '#000000';
+                cCtx.fillRect(0,0, cStar.width, cStar.height);
+                cCtx.fillStyle = '#ffffff';
+                starsList.forEach(s => {
+                    s.alpha += (Math.random() - 0.5) * 0.1;
+                    s.alpha = Math.max(0.1, Math.min(1.0, s.alpha));
+                    cCtx.globalAlpha = s.alpha;
+                    cCtx.fillRect(s.x, s.y, s.size, s.size);
+                });
+            }, 30);
+
+            document.body.classList.add('shake-active');
+            layer.classList.remove('hidden');
+
+            await new Promise(r => setTimeout(r, 4000));
+
+            clearInterval(cutsceneInterval);
+            document.body.classList.remove('shake-active');
+            
+            overlay.style.opacity = '1';
+            await new Promise(r => setTimeout(r, 150));
+
+            layer.classList.add('hidden');
+
+            revealAuraOutputs(rolledAura);
+            playSynthSound('reveal_grand');
+            createBurst(rolledAura.colors, 100); 
+
+            overlay.style.opacity = '0';
+            isRolling = false;
+        }
+
+        // --- BUFF TIMING DECREMENT LOOP ---
+        setInterval(() => {
+            let stateChanged = false;
+
+            if (state.buffs.luckTime > 0) {
+                state.buffs.luckTime--;
+                if (state.buffs.luckTime === 0) {
+                    state.buffs.luckBonus = 0;
+                    showNotification("🧪 LUCK EXPIRED", "The potion's fortune influence has worn off.");
+                }
+                stateChanged = true;
+            }
+
+            if (state.buffs.speedTime > 0) {
+                state.buffs.speedTime--;
+                if (state.buffs.speedTime === 0) {
+                    state.buffs.speedBonus = 0;
+                    showNotification("🧪 HASTE EXPIRED", "The speed adrenaline potion has depleted.");
+                }
+                stateChanged = true;
+            }
+
+            if (stateChanged) {
+                saveEngineState();
+                updateActiveBuffDisplays();
+            }
+        }, 1000);
+
+        function updateActiveBuffDisplays() {
+            const container = document.getElementById('active-timers-container');
+            container.innerHTML = '';
+
+            if (state.buffs.luckTime > 0) {
+                const min = Math.floor(state.buffs.luckTime / 60);
+                const sec = state.buffs.luckTime % 60;
+                const formattedSec = sec < 10 ? '0' + sec : sec;
+                container.innerHTML += `
+                    <div class="glass-panel text-amber-300 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-lg animate-pulse">
+                        <span>🍀 Luck Active: +${state.buffs.luckBonus * 100}% (${min}:${formattedSec})</span>
+                    </div>
+                `;
+            }
+
+            if (state.buffs.speedTime > 0) {
+                const min = Math.floor(state.buffs.speedTime / 60);
+                const sec = state.buffs.speedTime % 60;
+                const formattedSec = sec < 10 ? '0' + sec : sec;
+                container.innerHTML += `
+                    <div class="glass-panel text-cyan-400 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-lg animate-pulse">
+                        <span>⚡ Haste Active: +${state.buffs.speedBonus * 100}% (${min}:${formattedSec})</span>
+                    </div>
+                `;
+            }
+
+            if (state.buffs.nextRollCount > 0) {
+                container.innerHTML += `
+                    <div class="glass-panel text-purple-400 border border-fuchsia-500/20 font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 shadow-lg">
+                        <span>🌌 God Shot Left: x${state.buffs.nextRollCount} (+${(state.buffs.nextRollLuck * 100).toLocaleString()}% Luck)</span>
+                    </div>
+                `;
+            }
+        }
+
+        function getCalculatedLuckMultiplier() {
+            let mult = 1.0;
+            
+            if (state.equippedLuckGear) {
+                const gear = RECIPES.find(g => g.id === state.equippedLuckGear);
+                if (gear) mult += gear.luckBonus;
+            }
+            if (state.equippedSpeedGear) {
+                const gear = RECIPES.find(g => g.id === state.equippedSpeedGear);
+                if (gear) mult += gear.luckBonus;
+            }
+
+            mult += state.buffs.luckBonus;
+
+            if (state.buffs.nextRollCount > 0) {
+                mult += state.buffs.nextRollLuck;
+            }
+
+            if (state.rollsSinceLucky >= 10) {
+                mult *= 2.0; 
+            }
+
+            mult *= state.adminLuckMult;
+
+            return mult;
+        }
+
+        function getRollCooldown() {
+            let baseCooldown = 1000; // Updated to 1.00 seconds default
+            let reduction = 0;
+
+            if (state.equippedSpeedGear) {
+                const gear = RECIPES.find(g => g.id === state.equippedSpeedGear);
+                if (gear) reduction += gear.speedBonus;
+            }
+            if (state.equippedLuckGear) {
+                const gear = RECIPES.find(g => g.id === state.equippedLuckGear);
+                if (gear) reduction += gear.speedBonus;
+            }
+
+            reduction += state.buffs.speedBonus;
+
+            return Math.max(200, baseCooldown * (1 - reduction)); 
+        }
+
+        function calculateRNGResult() {
+            const luckMult = getCalculatedLuckMultiplier();
+
+            for (let i = 0; i < AURAS.length; i++) {
+                const currentAura = AURAS[i];
+                if (currentAura.chance === 1) return currentAura;
+
+                const simulatedOdds = Math.max(1, currentAura.chance / luckMult);
+                if (Math.floor(Math.random() * simulatedOdds) === 0) {
+                    return currentAura;
+                }
+            }
+            return AURAS[AURAS.length - 1]; 
+        }
+
+        function revealAuraOutputs(rolledAura) {
+            const outName = document.getElementById('roll-name-output');
+            const outChance = document.getElementById('roll-chance-output');
+
+            outName.className = `text-2xl font-black tracking-wide ${rolledAura.class} ${rolledAura.textClass}`;
+            outName.innerText = rolledAura.name;
+            outChance.innerText = `1 in ${rolledAura.chance.toLocaleString()}`;
+
+            const core = document.getElementById('crystal-core');
+            core.setAttribute('fill', rolledAura.colors[0]);
+            core.setAttribute('rx', '32');
+            core.setAttribute('ry', '48');
+            setTimeout(() => {
+                core.setAttribute('rx', '15');
+                core.setAttribute('ry', '25');
+            }, 180);
+        }
+
+        function runLiveDeckSlotAnimation(callback) {
+            const outName = document.getElementById('roll-name-output');
+            const outChance = document.getElementById('roll-chance-output');
+            const spinDuration = 1200; // 1.2s rapid spin sequence
+            const intervalTime = 60;
+            const steps = spinDuration / intervalTime;
+            let step = 0;
+
+            outName.classList.add('blur-[1px]');
+
+            const spin = setInterval(() => {
+                const randomAura = AURAS[Math.floor(Math.random() * AURAS.length)];
+                outName.className = `text-2xl font-black tracking-wide ${randomAura.class} ${randomAura.textClass}`;
+                outName.innerText = randomAura.name;
+                outChance.innerText = "SPINNING...";
+                step++;
+
+                if (step >= steps) {
+                    clearInterval(spin);
+                    outName.classList.remove('blur-[1px]');
+                    callback();
+                }
+            }, intervalTime);
+        }
+
+        async function manualRoll() {
+            initAudio();
+            if (isRolling || isCooldownActive) return;
+            if (isAutoRolling) toggleAutoRoll();
+
+            isCooldownActive = true;
+            const btn = document.getElementById('btn-roll');
+            const text = document.getElementById('roll-btn-text');
+            const cooldownTime = getRollCooldown();
+
+            btn.classList.add('opacity-50', 'pointer-events-none');
+            
+            // Spin deck slot then fire the core roll
+            runLiveDeckSlotAnimation(async () => {
+                await executeCoreRollProcess();
+                
+                const start = Date.now();
+                const interval = setInterval(() => {
+                    const elapsed = Date.now() - start;
+                    const remaining = Math.max(0, cooldownTime - elapsed);
+                    if (remaining <= 0) {
+                        clearInterval(interval);
+                        text.innerText = "ROLL";
+                        btn.classList.remove('opacity-50', 'pointer-events-none');
+                        isCooldownActive = false;
+                    } else {
+                        text.innerText = `${(remaining/1000).toFixed(2)}s`;
+                    }
+                }, 10);
+            });
+        }
+
+        async function executeCoreRollProcess() {
+            state.totalRolls++;
+            state.rollsSinceLucky = (state.rollsSinceLucky || 0) + 1;
+            
+            const isLuckyTurn = state.rollsSinceLucky >= 10;
+            if (isLuckyTurn) {
+                playSynthSound('coin_rattle'); 
+                showNotification("🎰 LUCKY ROLL ACTIVE", "Double luck triggered for this spin!", "from-yellow-400 to-emerald-400");
+            } else {
+                playSynthSound('click'); 
+            }
+
+            const rolledAura = calculateRNGResult();
+            state.inventory[rolledAura.id] = (state.inventory[rolledAura.id] || 0) + 1;
+
+            if (state.buffs.nextRollCount > 0) {
+                state.buffs.nextRollCount--;
+                if (state.buffs.nextRollCount === 0) {
+                    state.buffs.nextRollLuck = 0;
+                }
+                updateActiveBuffDisplays();
+            }
+
+            if (isLuckyTurn) {
+                state.rollsSinceLucky = 0;
+            }
+
+            const recordIdx = AURAS.findIndex(a => a.id === state.bestAuraId);
+            const currentIdx = AURAS.findIndex(a => a.id === rolledAura.id);
+            if (currentIdx < recordIdx) {
+                state.bestAuraId = rolledAura.id;
+                showNotification("🎉 NEW RECORD!", `Unlocked the 1 in ${rolledAura.chance.toLocaleString()} ${rolledAura.name}!`, "from-yellow-400 to-amber-500");
+            }
+
+            saveEngineState();
+
+            const chosenFilter = state.cutsceneFilter !== undefined ? state.cutsceneFilter : 1000;
+            if (rolledAura.chance >= chosenFilter) {
+                await runAuraRevealCutscene(rolledAura);
+            } else {
+                const progress = document.getElementById('suspense-bar');
+                progress.style.width = "100%";
+                setTimeout(() => { progress.style.width = "0%"; }, 220);
+
+                createBurst(rolledAura.colors, rolledAura.chance >= 50 ? 55 : 15);
+                playSynthSound(rolledAura.sound);
+                revealAuraOutputs(rolledAura);
+            }
+        }
+
+        function toggleAutoRoll() {
+            initAudio();
+            isAutoRolling = !isAutoRolling;
+            
+            const indicator = document.getElementById('autoroll-indicator');
+            const btn = document.getElementById('btn-autoroll');
+
+            if (isAutoRolling) {
+                indicator.className = "w-3 h-3 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]";
+                btn.classList.add('border-green-500/30', 'border');
+                
+                const speed = getRollCooldown();
+                autoRollInterval = setInterval(() => {
+                    if (!isRolling) {
+                        runLiveDeckSlotAnimation(() => {
+                            executeCoreRollProcess();
+                        });
+                    }
+                }, speed + 1300); // Pad for slot rotation duration
+            } else {
+                indicator.className = "w-3 h-3 rounded-full bg-red-500";
+                btn.classList.remove('border-green-500/30', 'border');
+                clearInterval(autoRollInterval);
+            }
+        }
+
+        function toggleInventory() {
+            initAudio();
+            const modal = document.getElementById('inventory-modal');
+            if (modal.classList.contains('hidden')) {
+                buildInventoryList();
+                buildPotionInventoryList();
+                
+                document.getElementById('cutscene-filter-select').value = state.cutsceneFilter !== undefined ? state.cutsceneFilter : 1000;
+                document.getElementById('disable-sparks-toggle').checked = !!state.disableSparks;
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function updateCutsceneFilter(val) {
+            state.cutsceneFilter = parseInt(val);
+            saveEngineState();
+            showNotification("⚙️ SETTING UPDATE", `Cutscenes only play for auras >= 1 in ${state.cutsceneFilter.toLocaleString()} rarity!`);
+        }
+
+        function toggleDisableSparks(checked) {
+            state.disableSparks = checked;
+            saveEngineState();
+            showNotification("⚙️ SETTING UPDATE", `Performance Sparks ${state.disableSparks ? 'Disabled' : 'Enabled'}!`);
+        }
+
+        function switchInventoryTab(tab) {
+            initAudio();
+            activeInventoryTab = tab;
+            
+            const tabAuras = document.getElementById('inv-tab-auras');
+            const tabPotions = document.getElementById('inv-tab-potions');
+            const listAuras = document.getElementById('inventory-list');
+            const listPotions = document.getElementById('potion-inventory-list');
+
+            if (tab === 'auras') {
+                tabAuras.className = "text-xl font-black border-b-2 border-amber-500 pb-1 uppercase tracking-wide";
+                tabPotions.className = "text-xl font-black text-gray-500 pb-1 uppercase tracking-wide hover:text-white transition-colors";
+                listAuras.classList.remove('hidden');
+                listAuras.classList.add('flex');
+                listPotions.classList.add('hidden');
+                listPotions.classList.remove('flex');
+                buildInventoryList();
+            } else {
+                tabPotions.className = "text-xl font-black border-b-2 border-amber-500 pb-1 uppercase tracking-wide";
+                tabAuras.className = "text-xl font-black text-gray-500 pb-1 uppercase tracking-wide hover:text-white transition-colors";
+                listPotions.classList.remove('hidden');
+                listPotions.classList.add('flex');
+                listAuras.classList.add('hidden');
+                listAuras.classList.remove('flex');
+                buildPotionInventoryList();
+            }
+        }
+
+        function buildInventoryList() {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = '';
+
+            AURAS.forEach(aura => {
+                const owned = state.inventory[aura.id] || 0;
+                const isEquipped = state.equippedAuraId === aura.id;
+                
+                const item = document.createElement('div');
+                item.className = `flex justify-between items-center p-3 rounded-xl bg-white/5 border ${isEquipped ? 'border-amber-500/50' : 'border-white/5'} transition-all hover:bg-white/10`;
+
+                if (owned > 0) {
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="flex flex-col">
+                                <span class="font-black text-lg tracking-wider ${aura.class} ${aura.textClass}">${aura.name}</span>
+                                <span class="text-[10px] text-gray-400 font-mono">Odds: 1 in ${aura.chance.toLocaleString()} | Owned: x${owned.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${isEquipped 
+                                ? `<span class="bg-amber-500/20 text-amber-300 text-xs px-3 py-1.5 rounded-lg border border-amber-500/30 font-bold uppercase tracking-wide">Active</span>`
+                                : `<button onclick="equipAura('${aura.id}')" class="bg-white text-black hover:bg-gray-200 text-xs px-4 py-1.5 rounded-lg font-bold transition-all">EQUIP</button>`
+                            }
+                        </div>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3 opacity-30">
+                            <div class="flex flex-col">
+                                <span class="font-black text-lg text-gray-500">Locked Aura</span>
+                                <span class="text-[10px] text-gray-600 font-mono">Odds: 1 in ${aura.chance.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-gray-600">LOCKED</span>
+                    `;
+                }
+                list.appendChild(item);
+            });
+        }
+
+        function buildPotionInventoryList() {
+            const list = document.getElementById('potion-inventory-list');
+            list.innerHTML = '';
+
+            const allInventoryPotions = [
+                { id: "lucky_spawn", name: "Lucky Potion", desc: "Grants +25% Luck for 1 minute.", type: "LUCK", bonus: 0.25, duration: 60, color: "from-green-600 to-emerald-400 border-green-500/20" },
+                { id: "speed_spawn", name: "Speed Potion", desc: "Grants +25% Roll Speed for 1 minute.", type: "SPEED", bonus: 0.25, duration: 60, color: "from-blue-600 to-cyan-400 border-blue-500/20" },
+                ...POTION_RECIPES
+            ];
+
+            allInventoryPotions.forEach(pot => {
+                const count = state.potions[pot.id] || 0;
+                const item = document.createElement('div');
+                item.className = `glass-panel p-3.5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border border-white/5`;
+
+                item.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg font-black text-white">${pot.name}</span>
+                            <span class="bg-white/10 px-2 py-0.5 rounded text-[10px] font-bold">Qty: x${count}</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">${pot.desc}</p>
+                    </div>
+                    <div class="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+                        <input type="number" id="use-qty-${pot.id}" min="1" max="${count}" value="1" class="bg-black/40 text-center font-bold text-xs py-1.5 rounded-lg w-12 border border-white/10">
+                        <button onclick="consumePotion('${pot.id}', ${count})" ${count > 0 ? '' : 'disabled'} class="flex-1 md:flex-initial bg-white disabled:opacity-30 disabled:hover:scale-100 text-black hover:scale-105 px-4 py-1.5 rounded-lg font-black text-xs transition-all uppercase">
+                            Consume
+                        </button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function equipAura(auraId) {
+            initAudio();
+            if (!state.inventory[auraId] || state.inventory[auraId] <= 0) return;
+            state.equippedAuraId = auraId;
+            saveEngineState();
+            buildInventoryList();
+            showNotification("🛡️ AURA EQUIPPED", `Displaying the visual ${auraId.toUpperCase()} pedestal particles!`);
+        }
+
+        function consumePotion(potId, availableQty) {
+            initAudio();
+            const inputVal = parseInt(document.getElementById(`use-qty-${potId}`).value) || 1;
+            const useAmt = Math.min(availableQty, Math.max(1, inputVal));
+
+            if (useAmt <= 0) return;
+
+            state.potions[potId] -= useAmt;
+
+            const allInventoryPotions = [
+                { id: "lucky_spawn", type: "LUCK", bonus: 0.25, duration: 60 },
+                { id: "speed_spawn", type: "SPEED", bonus: 0.25, duration: 60 },
+                ...POTION_RECIPES
+            ];
+            const pot = allInventoryPotions.find(p => p.id === potId);
+
+            if (pot.duration) {
+                const addedSecs = pot.duration * useAmt;
+                if (pot.type === 'LUCK') {
+                    state.buffs.luckBonus = pot.bonus;
+                    state.buffs.luckTime = (state.buffs.luckTime || 0) + addedSecs;
+                } else if (pot.type === 'SPEED') {
+                    state.buffs.speedBonus = pot.bonus;
+                    state.buffs.speedTime = (state.buffs.speedTime || 0) + addedSecs;
+                }
+            } else {
+                state.buffs.nextRollLuck = pot.bonus;
+                state.buffs.nextRollCount = (state.buffs.nextRollCount || 0) + useAmt;
+            }
+
+            if (isAutoRolling) {
+                clearInterval(autoRollInterval);
+                const newSpeed = getRollCooldown();
+                autoRollInterval = setInterval(() => {
+                    if (!isRolling) {
+                        runLiveDeckSlotAnimation(() => {
+                            executeCoreRollProcess();
+                        });
+                    }
+                }, newSpeed + 1300);
+            }
+
+            saveEngineState();
+            buildPotionInventoryList();
+            updateActiveBuffDisplays();
+            showNotification("🧪 POTION CONSUMED", `Gained active buffs! Stacked values applied.`);
+        }
+
+        function toggleCrafting() {
+            initAudio();
+            const modal = document.getElementById('crafting-modal');
+            if (modal.classList.contains('hidden')) {
+                buildCraftingList();
+                buildBrewingList();
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function switchCraftTab(tab) {
+            initAudio();
+            activeCraftTab = tab;
+
+            const tabGears = document.getElementById('craft-tab-gears');
+            const tabPotions = document.getElementById('craft-tab-potions');
+            const listGears = document.getElementById('crafting-list');
+            const listPotions = document.getElementById('brewing-list');
+
+            if (tab === 'gears') {
+                tabGears.className = "text-xl font-black border-b-2 border-cyan-400 pb-1 uppercase tracking-wide";
+                tabPotions.className = "text-xl font-black text-gray-500 pb-1 uppercase tracking-wide hover:text-white transition-colors";
+                listGears.classList.remove('hidden');
+                listGears.classList.add('flex');
+                listPotions.classList.add('hidden');
+                listPotions.classList.remove('flex');
+                buildCraftingList();
+            } else {
+                tabPotions.className = "text-xl font-black border-b-2 border-cyan-400 pb-1 uppercase tracking-wide";
+                tabGears.className = "text-xl font-black text-gray-500 pb-1 uppercase tracking-wide hover:text-white transition-colors";
+                listPotions.classList.remove('hidden');
+                listPotions.classList.add('flex');
+                listGears.classList.add('hidden');
+                listGears.classList.remove('flex');
+                buildBrewingList();
+            }
+        }
+
+        function buildCraftingList() {
+            const list = document.getElementById('crafting-list');
+            list.innerHTML = '';
+
+            RECIPES.forEach(recipe => {
+                const isCrafted = (state.craftedGears || []).includes(recipe.id);
+                const isEquipped = state.equippedLuckGear === recipe.id || state.equippedSpeedGear === recipe.id;
+
+                let reqsHtml = '';
+                let canCraft = true;
+
+                Object.keys(recipe.requirements).forEach(auraId => {
+                    const requiredQty = recipe.requirements[auraId];
+                    const ownedQty = state.inventory[auraId] || 0;
+                    const auraRef = AURAS.find(a => a.id === auraId);
+                    
+                    const isMet = ownedQty >= requiredQty;
+                    if (!isMet) canCraft = false;
+
+                    reqsHtml += `
+                        <div class="flex justify-between items-center bg-black/40 border ${isMet ? 'border-green-500/20 text-green-400' : 'border-red-500/20 text-red-400'} px-2.5 py-1 rounded font-mono text-xs">
+                            <span>${auraRef ? auraRef.name : auraId}</span>
+                            <span>${ownedQty}/${requiredQty}</span>
+                        </div>
+                    `;
+                });
+
+                const box = document.createElement('div');
+                box.className = `glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between gap-4 border border-white/5 bg-gradient-to-r ${recipe.color} bg-opacity-10 w-full transition-all`;
+
+                box.innerHTML = `
+                    <div class="flex-1 flex flex-col gap-2">
+                        <h3 class="text-xl font-black tracking-wide text-white uppercase">${recipe.name}</h3>
+                        <p class="text-xs text-white/90 font-semibold leading-relaxed">${recipe.desc}</p>
+                        <div class="flex gap-2 mt-2">
+                            ${recipe.luckBonus > 0 ? `<span class="text-[10px] text-black font-black font-mono bg-white/60 px-2 py-1 rounded border border-white/40 shadow-sm">+${(recipe.luckBonus * 100)}% LUCK</span>` : ''}
+                            ${recipe.speedBonus > 0 ? `<span class="text-[10px] text-black font-black font-mono bg-white/60 px-2 py-1 rounded border border-white/40 shadow-sm">-${(recipe.speedBonus * 100)}% COOLDOWN</span>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-3 min-w-[200px] border-t md:border-t-0 md:border-l border-white/15 pt-3 md:pt-0 md:pl-4">
+                        <span class="text-[10px] font-bold text-white/80 uppercase tracking-wider">Required Materials:</span>
+                        <div class="grid grid-cols-1 gap-1.5 mb-2">
+                            ${reqsHtml}
+                        </div>
+                        <div>
+                            ${isCrafted 
+                                ? (isEquipped 
+                                    ? `<button onclick="unequipGear('${recipe.id}')" class="w-full bg-black/40 hover:bg-black/60 text-white border border-white/20 text-xs py-2 rounded-xl font-bold transition-all uppercase shadow-md">UNEQUIP</button>`
+                                    : `<button onclick="equipGear('${recipe.id}')" class="w-full bg-white hover:bg-gray-200 text-black text-xs py-2 rounded-xl font-bold transition-all uppercase shadow-md">EQUIP</button>`
+                                  )
+                                : `<button onclick="craftGear('${recipe.id}')" ${canCraft ? '' : 'disabled'} class="w-full bg-white disabled:opacity-30 disabled:hover:scale-100 text-black hover:scale-105 text-xs py-2.5 rounded-xl font-black transition-all uppercase shadow-lg">FORGE</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+                list.appendChild(box);
+            });
+        }
+
+        function craftGear(gearId) {
+            initAudio();
+            const recipe = RECIPES.find(g => g.id === gearId);
+            if (!recipe) return;
+
+            let hasMaterials = true;
+            Object.keys(recipe.requirements).forEach(auraId => {
+                const required = recipe.requirements[auraId];
+                const owned = state.inventory[auraId] || 0;
+                if (owned < required) hasMaterials = false;
+            });
+
+            if (!hasMaterials) return;
+
+            Object.keys(recipe.requirements).forEach(auraId => {
+                const required = recipe.requirements[auraId];
+                state.inventory[auraId] -= required;
+            });
+
+            state.craftedGears.push(gearId);
+            showNotification("🛠️ GEARED SECURED", `Forged the pristine ${recipe.name}!`, "from-cyan-400 to-emerald-500");
+            saveEngineState();
+            buildCraftingList();
+        }
+
+        function equipGear(gearId) {
+            initAudio();
+            const gear = RECIPES.find(g => g.id === gearId);
+            if (!gear) return;
+
+            if (gear.type === "LUCK") state.equippedLuckGear = gearId;
+            else if (gear.type === "SPEED") state.equippedSpeedGear = gearId;
+            else {
+                state.equippedLuckGear = gearId;
+                state.equippedSpeedGear = gearId;
+            }
+
+            if (isAutoRolling) {
+                clearInterval(autoRollInterval);
+                const newSpeed = getRollCooldown();
+                autoRollInterval = setInterval(() => {
+                    if (!isRolling) {
+                        runLiveDeckSlotAnimation(() => {
+                            executeCoreRollProcess();
+                        });
+                    }
+                }, newSpeed + 1300);
+            }
+
+            saveEngineState();
+            buildCraftingList();
+            showNotification("✨ POWER FUSED", `${gear.name} activated! Multipliers updated.`);
+        }
+
+        function unequipGear(gearId) {
+            initAudio();
+            if (state.equippedLuckGear === gearId) state.equippedLuckGear = null;
+            if (state.equippedSpeedGear === gearId) state.equippedSpeedGear = null;
+            
+            if (isAutoRolling) {
+                clearInterval(autoRollInterval);
+                const newSpeed = getRollCooldown();
+                autoRollInterval = setInterval(() => {
+                    if (!isRolling) {
+                        runLiveDeckSlotAnimation(() => {
+                            executeCoreRollProcess();
+                        });
+                    }
+                }, newSpeed + 1300);
+            }
+
+            saveEngineState();
+            buildCraftingList();
+            showNotification("⚡ UNEQUIPPED GEAR", "Selected modifiers deactivated.");
+        }
+
+        function buildBrewingList() {
+            const list = document.getElementById('brewing-list');
+            list.innerHTML = '';
+
+            POTION_RECIPES.forEach(pot => {
+                let reqsHtml = '';
+                let canCraft = true;
+
+                Object.keys(pot.requirements).forEach(reqId => {
+                    const reqQty = pot.requirements[reqId];
+                    let ownedQty = 0;
+                    let displayLabel = "";
+
+                    if (reqId === 'lucky_spawn') {
+                        ownedQty = state.potions.lucky_spawn || 0;
+                        displayLabel = "Lucky Flasks";
+                    } else if (reqId === 'speed_spawn') {
+                        ownedQty = state.potions.speed_spawn || 0;
+                        displayLabel = "Speed Flasks";
+                    } else {
+                        ownedQty = state.inventory[reqId] || 0;
+                        const auraRef = AURAS.find(a => a.id === reqId);
+                        displayLabel = auraRef ? auraRef.name : reqId;
+                    }
+
+                    const isMet = ownedQty >= reqQty;
+                    if (!isMet) canCraft = false;
+
+                    reqsHtml += `
+                        <div class="flex justify-between items-center bg-black/40 border ${isMet ? 'border-green-500/20 text-green-400' : 'border-red-500/20 text-red-400'} px-2.5 py-1 rounded font-mono text-xs">
+                            <span>${displayLabel}</span>
+                            <span>${ownedQty}/${reqQty}</span>
+                        </div>
+                    `;
+                });
+
+                const box = document.createElement('div');
+                // Expanded format card (no dropdown)
+                box.className = `glass-panel p-5 rounded-2xl flex flex-col md:flex-row justify-between gap-4 border border-white/5 bg-gradient-to-r ${pot.color} bg-opacity-10 w-full transition-all`;
+
+                box.innerHTML = `
+                    <div class="flex-1 flex flex-col gap-2">
+                        <h3 class="text-xl font-black tracking-wide text-white uppercase">${pot.name}</h3>
+                        <p class="text-xs text-white/90 font-semibold leading-relaxed">${pot.desc}</p>
+                    </div>
+
+                    <div class="flex flex-col gap-3 min-w-[200px] border-t md:border-t-0 md:border-l border-white/15 pt-3 md:pt-0 md:pl-4">
+                        <span class="text-[10px] font-bold text-white/80 uppercase tracking-wider">Required Ingredients:</span>
+                        <div class="grid grid-cols-1 gap-1.5 mb-2">
+                            ${reqsHtml}
+                        </div>
+                        <button onclick="brewPotion('${pot.id}')" ${canCraft ? '' : 'disabled'} class="w-full bg-white disabled:opacity-30 disabled:hover:scale-100 text-black hover:scale-105 text-xs py-2.5 rounded-xl font-black transition-all uppercase shadow-lg">
+                            BREW
+                        </button>
+                    </div>
+                `;
+                list.appendChild(box);
+            });
+        }
+
+        function brewPotion(potId) {
+            initAudio();
+            const pot = POTION_RECIPES.find(p => p.id === potId);
+            if (!pot) return;
+
+            let hasMaterials = true;
+            Object.keys(pot.requirements).forEach(reqId => {
+                const reqQty = pot.requirements[reqId];
+                let ownedQty = 0;
+                if (reqId === 'lucky_spawn') ownedQty = state.potions.lucky_spawn || 0;
+                else if (reqId === 'speed_spawn') ownedQty = state.potions.speed_spawn || 0;
+                else ownedQty = state.inventory[reqId] || 0;
+
+                if (ownedQty < reqQty) hasMaterials = false;
+            });
+
+            if (!hasMaterials) return;
+
+            Object.keys(pot.requirements).forEach(reqId => {
+                const reqQty = pot.requirements[reqId];
+                if (reqId === 'lucky_spawn') state.potions.lucky_spawn -= reqQty;
+                else if (reqId === 'speed_spawn') state.potions.speed_spawn -= reqQty;
+                else state.inventory[reqId] -= reqQty;
+            });
+
+            state.potions[potId] = (state.potions[potId] || 0) + 1;
+            showNotification("🧪 BREWED POTION", `Successfully brewed 1x ${pot.name}!`, "from-purple-500 to-indigo-500");
+            saveEngineState();
+            buildBrewingList();
+        }
+
+        const LOCAL_STORAGE_SAVE_KEY = 'sol_rng_forged_save';
+
+        function loadSavedEngineData() {
+            const data = localStorage.getItem(LOCAL_STORAGE_SAVE_KEY);
+            if (data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    state = { ...state, ...parsed };
+                    
+                    if (!state.potions) state.potions = { lucky_spawn: 0, speed_spawn: 0 };
+                    if (!state.buffs) state.buffs = { luckBonus: 0, luckTime: 0, speedBonus: 0, speedTime: 0, nextRollLuck: 0, nextRollCount: 0 };
+                    if (state.rollsSinceLucky === undefined) state.rollsSinceLucky = 0;
+                    if (state.cutsceneFilter === undefined) state.cutsceneFilter = 1000;
+                    if (state.disableSparks === undefined) state.disableSparks = false;
+                    
+                    // Explicit safe check ensuring arrays and state items always exist
+                    if (!state.craftedGears || !Array.isArray(state.craftedGears)) state.craftedGears = [];
+                    if (state.equippedLuckGear === undefined) state.equippedLuckGear = null;
+                    if (state.equippedSpeedGear === undefined) state.equippedSpeedGear = null;
+                    if (!state.inventory) state.inventory = { common: 1 };
+                } catch (e) {
+                    console.error("Local data corrupted, resetting defaults", e);
+                }
+            }
+            updateEngineUIElements();
+            updateActiveBuffDisplays();
+        }
+
+        function saveEngineState() {
+            localStorage.setItem(LOCAL_STORAGE_SAVE_KEY, JSON.stringify(state));
+            updateEngineUIElements();
+        }
+
+        function updateEngineUIElements() {
+            document.getElementById('total-rolls').innerText = state.totalRolls.toLocaleString();
+            
+            const lMult = getCalculatedLuckMultiplier();
+            document.getElementById('luck-multiplier').innerText = `${lMult.toLocaleString()}x`;
+            
+            const rollCooldownSec = (getRollCooldown() / 1000).toFixed(2);
+            document.getElementById('speed-indicator').innerText = `${rollCooldownSec}s`;
+
+            const bestAura = AURAS.find(a => a.id === state.bestAuraId) || AURAS[AURAS.length-1];
+            const recordTxt = document.getElementById('record-aura-name');
+            recordTxt.innerText = bestAura.name;
+            recordTxt.className = `text-sm font-black truncate max-w-[150px] ${bestAura.class} ${bestAura.textClass}`;
+
+            const equippedAura = AURAS.find(a => a.id === state.equippedAuraId) || AURAS[AURAS.length-1];
+            const eqTitle = document.getElementById('equipped-name');
+            eqTitle.innerText = equippedAura.name;
+            eqTitle.className = `text-4xl md:text-6xl font-black uppercase tracking-widest ${equippedAura.class} ${equippedAura.textClass}`;
+            document.getElementById('equipped-rarity').innerText = `Chance: 1 in ${equippedAura.chance.toLocaleString()}`;
+
+            const luckGearBadge = document.getElementById('eq-luck-gear');
+            if (state.equippedLuckGear) {
+                const g = RECIPES.find(x => x.id === state.equippedLuckGear);
+                luckGearBadge.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div> ${g.name}`;
+            } else {
+                luckGearBadge.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500/40"></div> No Luck Gear`;
+            }
+
+            const speedGearBadge = document.getElementById('eq-speed-gear');
+            if (state.equippedSpeedGear) {
+                const g = RECIPES.find(x => x.id === state.equippedSpeedGear);
+                speedGearBadge.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div> ${g.name}`;
+            } else {
+                speedGearBadge.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500/40"></div> No Cooldown Gear`;
+            }
+
+            const luckyVal = Math.min(10, state.rollsSinceLucky || 0);
+            document.getElementById('lucky-roll-bar').style.width = `${luckyVal * 10}%`;
+            const tracker = document.getElementById('lucky-roll-tracker');
+            if (luckyVal >= 10) {
+                tracker.innerText = "LUCKY ACTIVE (2x)";
+                tracker.className = "text-xs text-amber-400 font-black animate-pulse";
+            } else {
+                tracker.innerText = `Roll ${luckyVal}/10`;
+                tracker.className = "text-xs text-green-400 font-mono font-black";
+            }
+
+            document.getElementById('admin-luck-range').value = state.adminLuckMult;
+            document.getElementById('admin-luck-display').innerText = `${state.adminLuckMult.toLocaleString()}x`;
+        }
+
+        function toggleAdminPanel() {
+            initAudio();
+            const modal = document.getElementById('admin-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function updateAdminLuckValue(val) {
+            state.adminLuckMult = parseFloat(val);
+            document.getElementById('admin-luck-display').innerText = `${parseFloat(val).toLocaleString()}x`;
+            saveEngineState();
+        }
+
+        function setAdminLuckPreset(val) {
+            document.getElementById('admin-luck-range').value = val;
+            updateAdminLuckValue(val);
+        }
+
+        function giveAdminRolls(count) {
+            state.totalRolls += count;
+            showNotification("⚙️ ADMIN INJECTION", `Granted player +${count.toLocaleString()} rolls!`, "from-red-500 to-amber-500");
+            saveEngineState();
+        }
+
+        function giveAdminPotion(potionId, count) {
+            state.potions[potionId] = (state.potions[potionId] || 0) + count;
+            showNotification("⚙️ ADMIN INJECTION", `Injected +${count} ${potionId.toUpperCase()} flasks!`, "from-cyan-500 to-emerald-500");
+            saveEngineState();
+        }
+
+        function giveAllAuras(qty) {
+            AURAS.forEach(aura => {
+                state.inventory[aura.id] = (state.inventory[aura.id] || 0) + qty;
+            });
+            showNotification("⚙️ ADMIN INJECTION", `Injected +${qty} of every single Aura! Ready to forge gears.`, "from-green-500 to-emerald-500");
+            saveEngineState();
+        }
+
+        function showNotification(title, message, gradientColors = "from-cyan-500 to-indigo-500") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `glass-panel text-white p-3.5 rounded-2xl flex items-center gap-3 shadow-2xl border border-white/10 w-80 toast-notify relative overflow-hidden`;
+            
+            toast.innerHTML = `
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${gradientColors}"></div>
+                <div class="flex-1">
+                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">${title}</div>
+                    <div class="text-xs font-black text-white mt-0.5">${message}</div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        function wipeData() {
+            const confirmation = document.createElement('div');
+            confirmation.className = "fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-4 pointer-events-auto";
+            confirmation.innerHTML = `
+                <div class="glass-panel-heavy max-w-sm w-full p-6 rounded-2xl border border-red-500/30 flex flex-col gap-4 text-center">
+                    <span class="text-3xl">⚠️</span>
+                    <h2 class="text-lg font-black uppercase text-red-400">HARD RESET CONFIRMATION</h2>
+                    <p class="text-xs text-gray-400 leading-relaxed">This will permanently delete all unlocked auras, crafted passive gears, brewed potions, and total stats. This cannot be undone.</p>
+                    <div class="flex gap-2">
+                        <button id="cancel-wipe" class="flex-1 glass-panel text-xs py-2 rounded-lg font-bold">CANCEL</button>
+                        <button id="confirm-wipe" class="flex-1 bg-red-600 hover:bg-red-500 text-xs py-2 rounded-lg font-black text-white">CONFIRM WIPE</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmation);
+
+            document.getElementById('cancel-wipe').onclick = () => confirmation.remove();
+            document.getElementById('confirm-wipe').onclick = () => {
+                localStorage.removeItem(LOCAL_STORAGE_SAVE_KEY);
+                location.reload();
+            };
+        }
+    </script>
+</body>
+</html>
